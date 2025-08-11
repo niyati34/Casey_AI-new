@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casey AI - Automated Test Generation & Runner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <span>Casey AI</span>
+                </div>
+                <nav class="nav">
+                    <a href="#home" class="nav-link active">Home</a>
+                    <a href="#features" class="nav-link">Features</a>
+                    <a href="#api" class="nav-link">API</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Automated Test Generation
+                    <span class="gradient-text">Made Simple</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Generate and run comprehensive test cases from Figma designs, documents, or live websites with AI-powered precision.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="scrollToSection('api')">
+                        <i class="fas fa-play"></i>
+                        Try API
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-book"></i>
+                        Documentation
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-card">
+                    <i class="fas fa-code"></i>
+                    <span>Test Generation</span>
+                </div>
+                <div class="floating-card">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Automated Runner</span>
+                </div>
+                <div class="floating-card">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Results Analysis</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Powerful Features</h2>
+                <p class="section-subtitle">Everything you need for comprehensive test automation</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fab fa-figma"></i>
+                    </div>
+                    <h3>Figma Integration</h3>
+                    <p>Generate tests directly from your Figma designs using file keys</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Document Analysis</h3>
+                    <p>Upload PDF or Word documents to generate comprehensive test cases</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Live Website Testing</h3>
+                    <p>Test live websites and web applications in real-time</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Section -->
+    <section id="api" class="api-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Try Casey AI</h2>
+                <p class="section-subtitle">Generate and run test cases with our intuitive interface</p>
+            </div>
+
+            <!-- API Tabs -->
+            <div class="api-tabs">
+                <button class="tab-btn active" data-tab="generate">
+                    <i class="fas fa-plus-circle"></i>
+                    Generate Test Cases
+                </button>
+                <button class="tab-btn" data-tab="run">
+                    <i class="fas fa-play"></i>
+                    Run Test Cases
+                </button>
+            </div>
+
+            <!-- Generate Test Cases Tab -->
+            <div id="generate" class="tab-content active">
+                <div class="api-card">
+                    <h3>Generate Test Cases</h3>
+                    <p>Choose your input source to generate comprehensive test cases</p>
+                    
+                    <div class="input-tabs">
+                        <button class="input-tab active" data-input="figma">
+                            <i class="fab fa-figma"></i>
+                            Figma File
+                        </button>
+                        <button class="input-tab" data-input="document">
+                            <i class="fas fa-file-upload"></i>
+                            Document
+                        </button>
+                        <button class="input-tab" data-input="website">
+                            <i class="fas fa-link"></i>
+                            Website URL
+                        </button>
+                    </div>
+
+                    <!-- Figma Input -->
+                    <div id="figma-input" class="input-section active">
+                        <div class="form-group">
+                            <label for="figma-key">Figma File Key</label>
+                            <input type="text" id="figma-key" placeholder="Enter your Figma file key..." class="form-input">
+                            <small class="form-hint">You can find the file key in your Figma file URL</small>
+                        </div>
+                    </div>
+
+                    <!-- Document Input -->
+                    <div id="document-input" class="input-section">
+                        <div class="form-group">
+                            <label for="document-upload">Upload Document</label>
+                            <div class="file-upload-area" id="file-upload-area">
+                                <input type="file" id="document-upload" accept=".pdf,.doc,.docx" class="file-input">
+                                <div class="upload-content">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Drag & drop your file here or <span class="upload-link">browse</span></p>
+                                    <small>Supports PDF, DOC, DOCX files (max 16MB)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Website Input -->
+                    <div id="website-input" class="input-section">
+                        <div class="form-group">
+                            <label for="website-url">Website URL</label>
+                            <input type="url" id="website-url" placeholder="https://example.com" class="form-input">
+                            <small class="form-hint">Enter the URL of the website to analyze</small>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-generate" onclick="generateTests()">
+                        <i class="fas fa-magic"></i>
+                        Generate Test Cases
+                    </button>
+                </div>
+
+                <!-- Results Section -->
+                <div id="generate-results" class="results-section" style="display: none;">
+                    <div class="results-header">
+                        <h4>Generated Test Cases</h4>
+                        <div class="results-actions">
+                            <button class="btn btn-outline" onclick="downloadTests()">
+                                <i class="fas fa-download"></i>
+                                Download
+                            </button>
+                            <button class="btn btn-primary" onclick="switchToRunTab()">
+                                <i class="fas fa-play"></i>
+                                Run Tests
+                            </button>
+                        </div>
+                    </div>
+                    <div id="test-cases-list" class="test-cases">
+                        <!-- Generated test cases will appear here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Run Test Cases Tab -->
+            <div id="run" class="tab-content">
+                <div class="api-card">
+                    <h3>Run Test Cases</h3>
+                    <p>Execute test cases on live websites and get detailed results</p>
+                    
+                    <div class="form-group">
+                        <label for="test-website-url">Website URL</label>
+                        <input type="url" id="test-website-url" placeholder="https://example.com" class="form-input">
+                        <small class="form-hint">URL of the website where tests will be executed</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="live-testing-toggle" class="toggle-input">
+                            <span class="toggle-slider"></span>
+                            Enable Live Testing
+                        </label>
+                        <small class="form-hint">Run tests on the live website in real-time</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="test-cases-input">Test Cases (JSON)</label>
+                        <textarea id="test-cases-input" placeholder="Paste your test cases JSON here..." class="form-textarea"></textarea>
+                    </div>
+
+                    <button class="btn btn-primary btn-run" onclick="runTests()">
+                        <i class="fas fa-play"></i>
+                        Run Test Cases
+                    </button>
+                </div>
+
+                <!-- Test Results -->
+                <div id="run-results" class="results-section" style="display: none;">
+                    <div class="results-header">
+                        <h4>Test Results</h4>
+                        <div class="results-summary">
+                            <span class="result-stat passed">
+                                <i class="fas fa-check-circle"></i>
+                                <span id="passed-count">0</span> Passed
+                            </span>
+                            <span class="result-stat failed">
+                                <i class="fas fa-times-circle"></i>
+                                <span id="failed-count">0</span> Failed
+                            </span>
+                        </div>
+                    </div>
+                    <div id="test-results-list" class="test-results">
+                        <!-- Test results will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loading-text">Processing...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
