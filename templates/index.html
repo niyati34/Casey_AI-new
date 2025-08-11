@@ -5,84 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Casey AI - Automated Test Generation & Runner</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="modern-body">
+<body>
     <!-- Header -->
-    <header class="modern-header">
+    <header class="header">
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <div class="logo-icon">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <span class="logo-text">Casey AI</span>
+                    <i class="fas fa-robot"></i>
+                    <span>Casey AI</span>
                 </div>
                 <nav class="nav">
                     <a href="#home" class="nav-link active">Home</a>
-                    <a href="#pipeline" class="nav-link">Pipeline</a>
                     <a href="#features" class="nav-link">Features</a>
-                    <button class="btn-contact">
-                        <i class="fas fa-paper-plane"></i>
-                        Get Started
-                    </button>
+                    <a href="#api" class="nav-link">API</a>
                 </nav>
             </div>
         </div>
     </header>
 
-    <!-- Background Decoration -->
-    <div class="bg-decoration">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-        <div class="grid-overlay"></div>
-    </div>
-
     <!-- Hero Section -->
-    <section id="home" class="modern-hero">
+    <section id="home" class="hero">
         <div class="container">
             <div class="hero-content">
-                <div class="hero-badge">
-                    <i class="fas fa-sparkles"></i>
-                    <span>AI-Powered Testing Revolution</span>
-                </div>
                 <h1 class="hero-title">
-                    <span class="title-line">Casey AI</span>
-                    <span class="title-line gradient-text">Is a Premier</span>
-                    <span class="title-line">Test Automation</span>
-                    <span class="title-line gradient-text">Provider</span>
+                    Automated Test Generation
+                    <span class="gradient-text">Made Simple</span>
                 </h1>
                 <p class="hero-subtitle">
-                    Renowned for powering the backbone of modern web applications with our state-of-the-art 
-                    test generation services, automated execution & intelligent analysis
+                    Generate and run comprehensive test cases from Figma designs, documents, or live websites with AI-powered precision.
                 </p>
                 <div class="hero-buttons">
-                    <button class="btn-primary modern-btn" onclick="scrollToSection('pipeline')">
-                        <span>Start Pipeline</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                    <button class="btn-secondary modern-btn">
+                    <button class="btn btn-primary" onclick="scrollToSection('api')">
                         <i class="fas fa-play"></i>
-                        <span>Watch Demo</span>
+                        Try API
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-book"></i>
+                        Documentation
                     </button>
                 </div>
-                
-                <!-- Stats Cards -->
-                <div class="stats-container">
-                    <div class="stat-card">
-                        <div class="stat-number">192k</div>
-                        <div class="stat-label">Tests Generated</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">34</div>
-                        <div class="stat-label">Frameworks Supported</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">99.8%</div>
-                        <div class="stat-label">Accuracy Rate</div>
-                    </div>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-card">
+                    <i class="fas fa-code"></i>
+                    <span>Test Generation</span>
+                </div>
+                <div class="floating-card">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Automated Runner</span>
+                </div>
+                <div class="floating-card">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Results Analysis</span>
                 </div>
             </div>
         </div>
@@ -121,389 +98,332 @@
         </div>
     </section>
 
-    <!-- API Section -->
-    <section id="api" class="api-section">
+    <!-- Pipeline Section -->
+    <section id="api" class="pipeline-section">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Casey AI Pipeline</h2>
-                <p class="section-subtitle">Generate and execute test cases through our intelligent pipeline</p>
+                <p class="section-subtitle">Follow our intelligent pipeline to generate and execute test cases seamlessly</p>
             </div>
 
             <!-- Pipeline Progress -->
             <div class="pipeline-progress">
                 <div class="pipeline-step active" data-step="1">
-                    <div class="step-circle">
-                        <i class="fas fa-magic"></i>
-                        <span class="step-number">1</span>
+                    <div class="step-icon">
+                        <i class="fas fa-cog"></i>
                     </div>
                     <div class="step-content">
                         <h4>Generate Tests</h4>
                         <p>Choose your source</p>
                     </div>
                 </div>
-                <div class="pipeline-line"></div>
+                <div class="pipeline-connector"></div>
                 <div class="pipeline-step" data-step="2">
-                    <div class="step-circle">
-                        <i class="fas fa-globe"></i>
-                        <span class="step-number">2</span>
+                    <div class="step-icon">
+                        <i class="fas fa-eye"></i>
                     </div>
                     <div class="step-content">
-                        <h4>Select Website</h4>
-                        <p>Choose target site</p>
+                        <h4>Review Tests</h4>
+                        <p>Verify generated tests</p>
                     </div>
                 </div>
-                <div class="pipeline-line"></div>
+                <div class="pipeline-connector"></div>
                 <div class="pipeline-step" data-step="3">
-                    <div class="step-circle">
+                    <div class="step-icon">
                         <i class="fas fa-play"></i>
-                        <span class="step-number">3</span>
                     </div>
                     <div class="step-content">
                         <h4>Execute Tests</h4>
-                        <p>Run & get results</p>
+                        <p>Run on target website</p>
                     </div>
                 </div>
-            </div>
-
-    <!-- Pipeline Section -->
-    <section id="pipeline" class="pipeline-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Intelligent Test Pipeline</h2>
-                <p class="section-subtitle">Transform your testing workflow with our advanced AI-powered pipeline</p>
-            </div>
-
-            <!-- Pipeline Progress Tracker -->
-            <div class="pipeline-progress">
-                <div class="progress-line"></div>
-                <div class="pipeline-step active" data-step="1">
-                    <div class="step-circle">
-                        <div class="step-icon">
-                            <i class="fas fa-magic"></i>
-                        </div>
-                        <div class="step-number">01</div>
+                <div class="pipeline-connector"></div>
+                <div class="pipeline-step" data-step="4">
+                    <div class="step-icon">
+                        <i class="fas fa-chart-line"></i>
                     </div>
-                    <div class="step-info">
-                        <h4>Generate Tests</h4>
-                        <p>Choose your source</p>
-                    </div>
-                </div>
-                <div class="pipeline-step" data-step="2">
-                    <div class="step-circle">
-                        <div class="step-icon">
-                            <i class="fas fa-globe"></i>
-                        </div>
-                        <div class="step-number">02</div>
-                    </div>
-                    <div class="step-info">
-                        <h4>Target Website</h4>
-                        <p>Select testing environment</p>
-                    </div>
-                </div>
-                <div class="pipeline-step" data-step="3">
-                    <div class="step-circle">
-                        <div class="step-icon">
-                            <i class="fas fa-rocket"></i>
-                        </div>
-                        <div class="step-number">03</div>
-                    </div>
-                    <div class="step-info">
-                        <h4>Execute & Analyze</h4>
-                        <p>Run tests & get insights</p>
+                    <div class="step-content">
+                        <h4>View Results</h4>
+                        <p>Analyze test outcomes</p>
                     </div>
                 </div>
             </div>
 
             <!-- Pipeline Content -->
-            <div class="pipeline-container">
-                <!-- Step 1: Generate Tests -->
-                <div class="pipeline-content active" data-content="1">
-                    <div class="glass-card">
-                        <div class="card-header">
-                            <div class="card-icon">
-                                <i class="fas fa-wand-magic-sparkles"></i>
-                            </div>
-                            <div class="card-title">
+            <div class="pipeline-content">
+                <!-- Step 1: Generate Test Cases -->
+                <div id="step-1" class="pipeline-step-content active">
+                    <div class="step-card">
+                        <div class="step-header">
+                            <div class="step-number">01</div>
+                            <div class="step-info">
                                 <h3>Generate Test Cases</h3>
-                                <p>Choose your preferred input source for AI-powered test generation</p>
+                                <p>Choose your preferred method to generate comprehensive test cases</p>
                             </div>
                         </div>
-
-                        <div class="input-sources">
-                            <div class="source-card active" data-source="figma">
-                                <div class="source-icon">
+                        
+                        <div class="generation-options">
+                            <div class="option-card" data-option="figma">
+                                <div class="option-icon">
                                     <i class="fab fa-figma"></i>
                                 </div>
-                                <h4>Figma Design</h4>
-                                <p>Extract tests from design files</p>
-                                <div class="source-badge">Popular</div>
+                                <div class="option-content">
+                                    <h4>Figma Design</h4>
+                                    <p>Import from Figma file key</p>
+                                </div>
+                                <div class="option-radio">
+                                    <input type="radio" name="generation-method" value="figma" id="figma-option">
+                                    <label for="figma-option"></label>
+                                </div>
                             </div>
-                            <div class="source-card" data-source="document">
-                                <div class="source-icon">
+                            
+                            <div class="option-card" data-option="document">
+                                <div class="option-icon">
                                     <i class="fas fa-file-alt"></i>
                                 </div>
-                                <h4>SRS Document</h4>
-                                <p>Parse requirements documents</p>
-                            </div>
-                            <div class="source-card" data-source="manual">
-                                <div class="source-icon">
-                                    <i class="fas fa-keyboard"></i>
+                                <div class="option-content">
+                                    <h4>SRS Document</h4>
+                                    <p>Upload PDF, DOC, or DOCX</p>
                                 </div>
-                                <h4>Manual Prompt</h4>
-                                <p>Describe your testing needs</p>
-                            </div>
-                            <div class="source-card" data-source="website">
-                                <div class="source-icon">
-                                    <i class="fas fa-link"></i>
+                                <div class="option-radio">
+                                    <input type="radio" name="generation-method" value="document" id="document-option">
+                                    <label for="document-option"></label>
                                 </div>
-                                <h4>Website URL</h4>
-                                <p>Analyze live websites</p>
+                            </div>
+                            
+                            <div class="option-card" data-option="prompt">
+                                <div class="option-icon">
+                                    <i class="fas fa-edit"></i>
+                                </div>
+                                <div class="option-content">
+                                    <h4>Manual Prompt</h4>
+                                    <p>Describe your requirements</p>
+                                </div>
+                                <div class="option-radio">
+                                    <input type="radio" name="generation-method" value="prompt" id="prompt-option">
+                                    <label for="prompt-option"></label>
+                                </div>
+                            </div>
+                            
+                            <div class="option-card" data-option="website">
+                                <div class="option-icon">
+                                    <i class="fas fa-globe"></i>
+                                </div>
+                                <div class="option-content">
+                                    <h4>Website Analysis</h4>
+                                    <p>Analyze existing website</p>
+                                </div>
+                                <div class="option-radio">
+                                    <input type="radio" name="generation-method" value="website" id="website-option">
+                                    <label for="website-option"></label>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Input Forms -->
                         <div class="input-forms">
-                            <!-- Figma Form -->
-                            <div class="input-form active" data-form="figma">
+                            <!-- Figma Input -->
+                            <div id="figma-form" class="input-form">
                                 <div class="form-group">
-                                    <label>Figma File Key</label>
-                                    <div class="input-wrapper">
-                                        <i class="fab fa-figma"></i>
-                                        <input type="text" id="figma-key" placeholder="Enter your Figma file key..." />
-                                    </div>
-                                    <small>Find this in your Figma file URL after '/file/'</small>
+                                    <label for="figma-key">Figma File Key</label>
+                                    <input type="text" id="figma-key" placeholder="Enter your Figma file key..." class="form-input">
+                                    <small class="form-hint">You can find the file key in your Figma file URL</small>
                                 </div>
                             </div>
 
-                            <!-- Document Form -->
-                            <div class="input-form" data-form="document">
+                            <!-- Document Input -->
+                            <div id="document-form" class="input-form">
                                 <div class="form-group">
-                                    <label>Upload SRS Document</label>
-                                    <div class="upload-zone" id="upload-zone">
-                                        <input type="file" id="document-upload" accept=".pdf,.doc,.docx" hidden />
+                                    <label for="document-upload">Upload SRS Document</label>
+                                    <div class="file-upload-area" id="file-upload-area">
+                                        <input type="file" id="document-upload" accept=".pdf,.doc,.docx" class="file-input">
                                         <div class="upload-content">
                                             <i class="fas fa-cloud-upload-alt"></i>
-                                            <h4>Drop your file here</h4>
-                                            <p>or <span class="upload-link">browse files</span></p>
-                                            <small>PDF, DOC, DOCX up to 16MB</small>
+                                            <p>Drag & drop your file here or <span class="upload-link">browse</span></p>
+                                            <small>Supports PDF, DOC, DOCX files (max 16MB)</small>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Manual Form -->
-                            <div class="input-form" data-form="manual">
+                            <!-- Prompt Input -->
+                            <div id="prompt-form" class="input-form">
                                 <div class="form-group">
-                                    <label>Describe Your Testing Requirements</label>
-                                    <div class="textarea-wrapper">
-                                        <textarea id="manual-prompt" placeholder="Describe what you want to test, user flows, features, or specific scenarios..."></textarea>
-                                    </div>
-                                    <small>Be as detailed as possible for better test generation</small>
+                                    <label for="manual-prompt">Describe Your Requirements</label>
+                                    <textarea id="manual-prompt" placeholder="Describe the features and functionality you want to test..." class="form-textarea"></textarea>
+                                    <small class="form-hint">Be as detailed as possible for better test generation</small>
                                 </div>
                             </div>
 
-                            <!-- Website Form -->
-                            <div class="input-form" data-form="website">
+                            <!-- Website Input -->
+                            <div id="website-form" class="input-form">
                                 <div class="form-group">
-                                    <label>Website URL</label>
-                                    <div class="input-wrapper">
-                                        <i class="fas fa-link"></i>
-                                        <input type="url" id="website-url" placeholder="https://example.com" />
-                                    </div>
-                                    <small>URL will be analyzed for test case generation</small>
+                                    <label for="analysis-website-url">Website URL for Analysis</label>
+                                    <input type="url" id="analysis-website-url" placeholder="https://example.com" class="form-input">
+                                    <small class="form-hint">Enter the URL of the website to analyze</small>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-actions">
-                            <button class="btn-generate" onclick="generateTests()">
-                                <i class="fas fa-sparkles"></i>
-                                <span>Generate Test Cases</span>
+                        <div class="step-actions">
+                            <button class="btn btn-primary btn-generate" onclick="generateTestsInPipeline()">
+                                <i class="fas fa-magic"></i>
+                                Generate Test Cases
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Step 2: Select Website -->
-                <div class="pipeline-content" data-content="2">
-                    <div class="glass-card">
-                        <div class="card-header">
-                            <div class="card-icon">
-                                <i class="fas fa-bullseye"></i>
-                            </div>
-                            <div class="card-title">
-                                <h3>Select Target Website</h3>
-                                <p>Choose where to execute your generated test cases</p>
+                <!-- Step 2: Review Generated Tests -->
+                <div id="step-2" class="pipeline-step-content">
+                    <div class="step-card">
+                        <div class="step-header">
+                            <div class="step-number">02</div>
+                            <div class="step-info">
+                                <h3>Review Generated Tests</h3>
+                                <p>Review and customize your generated test cases before execution</p>
                             </div>
                         </div>
-
-                        <div class="website-options">
-                            <div class="option-card recommended" id="same-website-option" style="display: none;">
-                                <div class="option-icon">
-                                    <i class="fas fa-check-double"></i>
-                                </div>
-                                <div class="option-content">
-                                    <h4>Use Same Website</h4>
-                                    <p id="detected-website">Website from test generation</p>
-                                    <div class="option-badge">Recommended</div>
-                                </div>
-                                <div class="option-action">
-                                    <button class="btn-select" onclick="useSameWebsite()">
-                                        <i class="fas fa-arrow-right"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="option-card">
-                                <div class="option-icon">
-                                    <i class="fas fa-plus-circle"></i>
-                                </div>
-                                <div class="option-content">
-                                    <h4>Different Website</h4>
-                                    <p>Specify a different target website</p>
-                                </div>
-                                <div class="option-action">
-                                    <button class="btn-select" onclick="showWebsiteInput()">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                </div>
-                            </div>
+                        
+                        <div id="generated-tests-review" class="tests-review">
+                            <!-- Generated tests will appear here -->
                         </div>
 
-                        <div class="website-input-section" id="website-input-section" style="display: none;">
-                            <div class="form-group">
-                                <label>Target Website URL</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-globe"></i>
-                                    <input type="url" id="target-website-url" placeholder="https://example.com" />
-                                </div>
-                            </div>
-                            
-                            <div class="test-options">
-                                <div class="option-toggle">
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="live-testing-toggle" checked>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <div class="toggle-info">
-                                        <h4>Live Testing Mode</h4>
-                                        <p>Execute tests on the live website in real-time</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-actions">
-                            <button class="btn-continue" onclick="continueToExecution()" disabled>
-                                <span>Continue to Execution</span>
+                        <div class="step-actions">
+                            <button class="btn btn-secondary" onclick="goToPipelineStep(1)">
+                                <i class="fas fa-arrow-left"></i>
+                                Back to Generation
+                            </button>
+                            <button class="btn btn-primary" onclick="proceedToExecution()">
                                 <i class="fas fa-arrow-right"></i>
+                                Proceed to Execution
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Step 3: Execute Tests -->
-                <div class="pipeline-content" data-content="3">
-                    <div class="glass-card">
-                        <div class="card-header">
-                            <div class="card-icon">
-                                <i class="fas fa-rocket"></i>
+                <div id="step-3" class="pipeline-step-content">
+                    <div class="step-card">
+                        <div class="step-header">
+                            <div class="step-number">03</div>
+                            <div class="step-info">
+                                <h3>Execute Test Cases</h3>
+                                <p>Run your test cases on the target website</p>
                             </div>
-                            <div class="card-title">
-                                <h3>Execute & Analyze</h3>
-                                <p>Run your test cases and get detailed insights</p>
+                        </div>
+                        
+                        <div class="execution-settings">
+                            <div class="settings-group">
+                                <div class="form-group">
+                                    <label for="execution-website-url">Target Website URL</label>
+                                    <input type="url" id="execution-website-url" placeholder="https://example.com" class="form-input">
+                                    <small class="form-hint">This will be auto-filled if you used website analysis for generation</small>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <div class="toggle-group">
+                                        <label class="toggle-label">
+                                            <input type="checkbox" id="live-testing-toggle" class="toggle-input">
+                                            <span class="toggle-slider"></span>
+                                            <span class="toggle-text">Enable Live Testing</span>
+                                        </label>
+                                        <small class="form-hint">Run tests on the live website in real-time</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="execution-preview">
+                                <h4>Tests to Execute</h4>
+                                <div id="execution-tests-preview" class="tests-preview">
+                                    <!-- Test preview will appear here -->
+                                </div>
                             </div>
                         </div>
 
-                        <div class="execution-summary">
-                            <div class="summary-item">
-                                <div class="summary-icon">
-                                    <i class="fas fa-list-check"></i>
-                                </div>
-                                <div class="summary-content">
-                                    <h4>Test Cases</h4>
-                                    <p id="test-count">0 tests ready</p>
-                                </div>
-                            </div>
-                            <div class="summary-item">
-                                <div class="summary-icon">
-                                    <i class="fas fa-globe"></i>
-                                </div>
-                                <div class="summary-content">
-                                    <h4>Target Website</h4>
-                                    <p id="target-summary">No website selected</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="execution-controls">
-                            <button class="btn-execute" onclick="executeTests()">
+                        <div class="step-actions">
+                            <button class="btn btn-secondary" onclick="goToPipelineStep(2)">
+                                <i class="fas fa-arrow-left"></i>
+                                Back to Review
+                            </button>
+                            <button class="btn btn-primary btn-execute" onclick="executeTestsInPipeline()">
                                 <i class="fas fa-play"></i>
-                                <span>Execute Test Suite</span>
+                                Execute Tests
                             </button>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Results Section -->
-                        <div class="results-section" id="results-section" style="display: none;">
-                            <div class="results-header">
-                                <h4>Test Results</h4>
-                                <div class="results-stats">
-                                    <div class="stat-item success">
+                <!-- Step 4: View Results -->
+                <div id="step-4" class="pipeline-step-content">
+                    <div class="step-card">
+                        <div class="step-header">
+                            <div class="step-number">04</div>
+                            <div class="step-info">
+                                <h3>Test Results</h3>
+                                <p>Comprehensive analysis of your test execution</p>
+                            </div>
+                        </div>
+                        
+                        <div class="results-dashboard">
+                            <div class="results-summary">
+                                <div class="summary-card">
+                                    <div class="summary-icon success">
                                         <i class="fas fa-check-circle"></i>
-                                        <span id="passed-tests">0</span>
-                                        <label>Passed</label>
                                     </div>
-                                    <div class="stat-item error">
+                                    <div class="summary-content">
+                                        <h4 id="passed-tests-count">0</h4>
+                                        <p>Tests Passed</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="summary-card">
+                                    <div class="summary-icon error">
                                         <i class="fas fa-times-circle"></i>
-                                        <span id="failed-tests">0</span>
-                                        <label>Failed</label>
                                     </div>
-                                    <div class="stat-item">
+                                    <div class="summary-content">
+                                        <h4 id="failed-tests-count">0</h4>
+                                        <p>Tests Failed</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="summary-card">
+                                    <div class="summary-icon info">
                                         <i class="fas fa-clock"></i>
-                                        <span id="execution-time">0s</span>
-                                        <label>Duration</label>
+                                    </div>
+                                    <div class="summary-content">
+                                        <h4 id="execution-duration">0s</h4>
+                                        <p>Duration</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="summary-card">
+                                    <div class="summary-icon warning">
+                                        <i class="fas fa-percentage"></i>
+                                    </div>
+                                    <div class="summary-content">
+                                        <h4 id="success-rate">0%</h4>
+                                        <p>Success Rate</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="results-list" id="results-list">
-                                <!-- Results will be populated here -->
+                            
+                            <div id="detailed-results" class="detailed-results">
+                                <!-- Detailed results will appear here -->
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    </section>
 
-    <!-- Features Section -->
-    <section id="features" class="features">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Advanced Capabilities</h2>
-                <p class="section-subtitle">Cutting-edge features that set Casey AI apart from traditional testing tools</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fab fa-figma"></i>
+                        <div class="step-actions">
+                            <button class="btn btn-secondary" onclick="goToPipelineStep(1)">
+                                <i class="fas fa-redo"></i>
+                                Start New Pipeline
+                            </button>
+                            <button class="btn btn-outline" onclick="downloadResults()">
+                                <i class="fas fa-download"></i>
+                                Download Report
+                            </button>
+                        </div>
                     </div>
-                    <h3>Design-Driven Testing</h3>
-                    <p>Generate comprehensive test cases directly from Figma designs, ensuring pixel-perfect implementation validation</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                    <h3>AI-Powered Analysis</h3>
-                    <p>Advanced machine learning algorithms understand your requirements and generate intelligent test scenarios</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-rocket"></i>
-                    </div>
-                    <h3>Real-time Execution</h3>
-                    <p>Execute tests on live websites with real-time feedback and detailed performance analytics</p>
                 </div>
             </div>
         </div>

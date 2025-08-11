@@ -41,6 +41,15 @@ def generate_test():
                 'tests': []
             })
         
+        elif test_type == 'prompt':
+            manual_prompt = data.get('manual_prompt')
+            # TODO: Implement prompt-based test generation logic
+            return jsonify({
+                'status': 'success',
+                'message': 'Test cases generated from manual prompt',
+                'tests': []
+            })
+        
         elif test_type == 'website':
             website_url = data.get('website_url')
             # TODO: Implement website-based test generation logic
