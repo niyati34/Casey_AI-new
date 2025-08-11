@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Casey AI - Automated Test Generation & Runner</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/landing.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Main Panel -->
+    <main class="stage">
+      <section class="panel">
+        <!-- Background purely via gradients (no geometric overlays) -->
+
+        <!-- Top bar inside panel (right-aligned links) -->
+        <div class="panel-topbar">
+          <a href="#" class="brand">
+            <span class="brand-name">Casey<span class="thin"> AI</span></span>
+          </a>
+          <nav class="panel-nav">
+            <a href="#services" class="panel-link">SERVICES</a>
+            <a href="#team" class="panel-link">TEAM</a>
+            <a href="#networks" class="panel-link">NETWORKS WE SUPPORT</a>
+          </nav>
+        </div>
+
+        <!-- Hero content -->
+        <div class="panel-hero">
+          <h1 class="title">
+            <span class="title-line">Casey AI</span>
+            <span class="title-line subtle">Is a Premier Automated</span>
+            <span class="title-line subtle">Test Generation & Runner</span>
+            <span class="title-line subtle">Provider</span>
+          </h1>
+
+          <div class="side-copy">
+            <p>
+              Renowned for powering the backbone of testing ecosystems with our
+              state‑of‑the‑art validation services, API endpoints & runners.
+            </p>
+            <a href="/pipeline" class="cta-pill">
+              <span>GET IN TOUCH</span>
+            </a>
+          </div>
+
+          <!-- Stats row at the bottom of panel -->
+          <div class="stats-row">
+            <div class="stat-block">
+              <div class="stat-num">192k</div>
+              <div class="stat-cap">Assets under management</div>
+            </div>
+            <div class="stat-block">
+              <div class="stat-num">34</div>
+              <div class="stat-cap">Unique delegators</div>
+            </div>
+            <div class="stat-block">
+              <div class="stat-num">99.9%</div>
+              <div class="stat-cap">Uptime</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/landing.js') }}"></script>
+  </body>
+</html>
