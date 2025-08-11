@@ -1,23 +1,26 @@
-// Global variables
-let currentTabInput = 'figma';
+// Modern Casey AI Pipeline JavaScript
+let currentPipelineStep = 1;
+let currentInputSource = 'figma';
 let generatedTests = [];
+let sourceWebsiteUrl = '';
+let targetWebsiteUrl = '';
 
 // DOM Elements
 const loadingOverlay = document.getElementById('loading-overlay');
 const loadingText = document.getElementById('loading-text');
 const toastContainer = document.getElementById('toast-container');
 
-// Initialize the application
+// Initialize application
 document.addEventListener('DOMContentLoaded', function() {
-    initializeEventListeners();
+    initializeNavigation();
+    initializePipeline();
     initializeFileUpload();
-    initializeTabs();
-    initializeInputTabs();
+    initializeSourceSelection();
+    setupScrollEffects();
 });
 
-// Event Listeners
-function initializeEventListeners() {
-    // Smooth scrolling for navigation
+// Navigation
+function initializeNavigation() {
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
@@ -29,99 +32,108 @@ function initializeEventListeners() {
             this.classList.add('active');
         });
     });
+}
 
-    // Window scroll event for header
-    window.addEventListener('scroll', function() {
-        const header = document.querySelector('.header');
-        if (window.scrollY > 50) {
-            header.style.background = 'rgba(255, 255, 255, 0.98)';
-        } else {
-            header.style.background = 'rgba(255, 255, 255, 0.95)';
+// Pipeline Management
+function initializePipeline() {
+    // Step clicking
+    document.querySelectorAll('.pipeline-step').forEach(step => {
+        step.addEventListener('click', function() {
+            const stepNumber = parseInt(this.getAttribute('data-step'));
+            if (stepNumber <= currentPipelineStep) {
+                goToStep(stepNumber);
+            }
+        });
+    });
+}
+
+function goToStep(stepNumber) {
+    currentPipelineStep = stepNumber;
+    
+    // Update progress indicator
+    document.querySelectorAll('.pipeline-step').forEach((step, index) => {
+        const stepNum = index + 1;
+        step.classList.remove('active', 'completed');
+        
+        if (stepNum < currentPipelineStep) {
+            step.classList.add('completed');
+        } else if (stepNum === currentPipelineStep) {
+            step.classList.add('active');
+        }
+    });
+    
+    // Update content
+    document.querySelectorAll('.pipeline-content').forEach((content, index) => {
+        content.classList.remove('active');
+        if (index + 1 === currentPipelineStep) {
+            content.classList.add('active');
+        }
+    });
+    
+    // Update step 2 based on previous selections
+    if (stepNumber === 2) {
+        updateStep2();
+    } else if (stepNumber === 3) {
+        updateStep3();
+    }
+}
+
+// Source Selection
+function initializeSourceSelection() {
+    document.querySelectorAll('.source-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const source = this.getAttribute('data-source');
+            selectInputSource(source);
+        });
+    });
+}
+
+function selectInputSource(source) {
+    currentInputSource = source;
+    
+    // Update source cards
+    document.querySelectorAll('.source-card').forEach(card => {
+        card.classList.remove('active');
+        if (card.getAttribute('data-source') === source) {
+            card.classList.add('active');
+        }
+    });
+    
+    // Update input forms
+    document.querySelectorAll('.input-form').forEach(form => {
+        form.classList.remove('active');
+        if (form.getAttribute('data-form') === source) {
+            form.classList.add('active');
         }
     });
 }
 
-// Tab functionality
-function initializeTabs() {
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
-
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const targetTab = this.getAttribute('data-tab');
-            
-            // Update button states
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Update content states
-            tabContents.forEach(content => {
-                content.classList.remove('active');
-                if (content.id === targetTab) {
-                    content.classList.add('active');
-                }
-            });
-        });
-    });
-}
-
-// Input tab functionality
-function initializeInputTabs() {
-    const inputTabs = document.querySelectorAll('.input-tab');
-    const inputSections = document.querySelectorAll('.input-section');
-
-    inputTabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            const targetInput = this.getAttribute('data-input');
-            currentTabInput = targetInput;
-            
-            // Update tab states
-            inputTabs.forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Update section states
-            inputSections.forEach(section => {
-                section.classList.remove('active');
-                if (section.id === targetInput + '-input') {
-                    section.classList.add('active');
-                }
-            });
-        });
-    });
-}
-
-// File upload functionality
+// File Upload
 function initializeFileUpload() {
-    const fileUploadArea = document.getElementById('file-upload-area');
+    const uploadZone = document.getElementById('upload-zone');
     const fileInput = document.getElementById('document-upload');
-
-    // Click to upload
-    fileUploadArea.addEventListener('click', function() {
-        fileInput.click();
-    });
-
-    // Drag and drop
-    fileUploadArea.addEventListener('dragover', function(e) {
+    
+    uploadZone.addEventListener('click', () => fileInput.click());
+    
+    uploadZone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        this.classList.add('dragover');
+        uploadZone.classList.add('dragover');
     });
-
-    fileUploadArea.addEventListener('dragleave', function(e) {
+    
+    uploadZone.addEventListener('dragleave', (e) => {
         e.preventDefault();
-        this.classList.remove('dragover');
+        uploadZone.classList.remove('dragover');
     });
-
-    fileUploadArea.addEventListener('drop', function(e) {
+    
+    uploadZone.addEventListener('drop', (e) => {
         e.preventDefault();
-        this.classList.remove('dragover');
-        
+        uploadZone.classList.remove('dragover');
         const files = e.dataTransfer.files;
         if (files.length > 0) {
             handleFileSelect(files[0]);
         }
     });
-
-    // File input change
+    
     fileInput.addEventListener('change', function() {
         if (this.files.length > 0) {
             handleFileSelect(this.files[0]);
@@ -129,7 +141,6 @@ function initializeFileUpload() {
     });
 }
 
-// Handle file selection
 function handleFileSelect(file) {
     const allowedTypes = ['.pdf', '.doc', '.docx'];
     const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
@@ -139,27 +150,272 @@ function handleFileSelect(file) {
         return;
     }
     
-    if (file.size > 16 * 1024 * 1024) { // 16MB
+    if (file.size > 16 * 1024 * 1024) {
         showToast('File size must be less than 16MB.', 'error');
         return;
     }
     
-    // Update UI to show selected file
-    const uploadContent = document.querySelector('#document-input .upload-content');
+    // Update UI
+    const uploadContent = document.querySelector('.upload-content');
     uploadContent.innerHTML = `
         <i class="fas fa-file-check"></i>
+        <h4>File Selected</h4>
         <p><strong>${file.name}</strong></p>
-        <small>File selected successfully</small>
+        <small>Ready for processing</small>
     `;
     
     showToast('File uploaded successfully!', 'success');
 }
 
-// Smooth scrolling function
+// Generate Tests
+async function generateTests() {
+    const btn = document.querySelector('.btn-generate');
+    const originalContent = btn.innerHTML;
+    
+    try {
+        // Validate input
+        const inputData = validateInput();
+        if (!inputData) return;
+        
+        // Show loading
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Generating...</span>';
+        btn.disabled = true;
+        showLoading('Analyzing input and generating test cases...');
+        
+        // Store source website if applicable
+        if (currentInputSource === 'website') {
+            sourceWebsiteUrl = inputData.website_url;
+        }
+        
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        
+        // Generate mock tests
+        generatedTests = generateMockTests(currentInputSource, inputData);
+        
+        showToast(`Generated ${generatedTests.length} test cases successfully!`, 'success');
+        
+        // Move to step 2
+        setTimeout(() => {
+            goToStep(2);
+            scrollToSection('pipeline');
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Error generating tests:', error);
+        showToast('Failed to generate test cases. Please try again.', 'error');
+    } finally {
+        btn.innerHTML = originalContent;
+        btn.disabled = false;
+        hideLoading();
+    }
+}
+
+function validateInput() {
+    switch (currentInputSource) {
+        case 'figma':
+            const figmaKey = document.getElementById('figma-key').value.trim();
+            if (!figmaKey) {
+                showToast('Please enter a Figma file key.', 'warning');
+                return null;
+            }
+            return { test_type: 'figma', figma_key: figmaKey };
+            
+        case 'document':
+            const fileInput = document.getElementById('document-upload');
+            if (!fileInput.files.length) {
+                showToast('Please select a document file.', 'warning');
+                return null;
+            }
+            return { 
+                test_type: 'document', 
+                file_name: fileInput.files[0].name,
+                file_content: 'Document content...'
+            };
+            
+        case 'manual':
+            const prompt = document.getElementById('manual-prompt').value.trim();
+            if (!prompt) {
+                showToast('Please describe your testing requirements.', 'warning');
+                return null;
+            }
+            return { test_type: 'manual', prompt: prompt };
+            
+        case 'website':
+            const url = document.getElementById('website-url').value.trim();
+            if (!url) {
+                showToast('Please enter a website URL.', 'warning');
+                return null;
+            }
+            if (!isValidUrl(url)) {
+                showToast('Please enter a valid URL.', 'warning');
+                return null;
+            }
+            return { test_type: 'website', website_url: url };
+            
+        default:
+            return null;
+    }
+}
+
+function generateMockTests(source, inputData) {
+    const testTemplates = {
+        figma: [
+            { name: 'UI Component Validation', type: 'Visual', description: 'Verify UI components match Figma design specifications' },
+            { name: 'Interactive Elements Test', type: 'Interaction', description: 'Test buttons, forms, and interactive elements' },
+            { name: 'Responsive Design Test', type: 'Responsive', description: 'Ensure design works across different screen sizes' },
+            { name: 'Color and Typography Test', type: 'Visual', description: 'Validate colors, fonts, and spacing match design' }
+        ],
+        document: [
+            { name: 'Requirements Validation', type: 'Functional', description: 'Test implementation against documented requirements' },
+            { name: 'User Flow Testing', type: 'User Journey', description: 'Validate complete user workflows' },
+            { name: 'Business Logic Test', type: 'Logic', description: 'Test business rules and validation logic' },
+            { name: 'Integration Test', type: 'Integration', description: 'Test system integrations and data flow' }
+        ],
+        manual: [
+            { name: 'Custom Scenario Test', type: 'Custom', description: 'Test based on manual requirements' },
+            { name: 'Edge Case Testing', type: 'Edge Case', description: 'Test unusual or boundary conditions' },
+            { name: 'User Experience Test', type: 'UX', description: 'Validate user experience and usability' }
+        ],
+        website: [
+            { name: 'Page Load Test', type: 'Performance', description: 'Test page loading speed and performance' },
+            { name: 'Navigation Test', type: 'Navigation', description: 'Verify all navigation links work correctly' },
+            { name: 'Form Validation Test', type: 'Form', description: 'Test form submission and validation' },
+            { name: 'Cross-browser Test', type: 'Compatibility', description: 'Test across different browsers' }
+        ]
+    };
+    
+    const templates = testTemplates[source] || testTemplates.manual;
+    return templates.map((template, index) => ({
+        id: index + 1,
+        ...template,
+        priority: Math.random() > 0.5 ? 'High' : 'Medium',
+        estimatedTime: Math.floor(Math.random() * 5) + 1 + ' min'
+    }));
+}
+
+// Step 2: Website Selection
+function updateStep2() {
+    const sameWebsiteOption = document.getElementById('same-website-option');
+    const detectedWebsite = document.getElementById('detected-website');
+    
+    if (sourceWebsiteUrl) {
+        sameWebsiteOption.style.display = 'flex';
+        detectedWebsite.textContent = sourceWebsiteUrl;
+    } else {
+        sameWebsiteOption.style.display = 'none';
+    }
+}
+
+function useSameWebsite() {
+    targetWebsiteUrl = sourceWebsiteUrl;
+    document.querySelector('.btn-continue').disabled = false;
+    showToast('Using same website for testing', 'info');
+}
+
+function showWebsiteInput() {
+    const section = document.getElementById('website-input-section');
+    section.style.display = 'block';
+    section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+    // Enable continue button when URL is entered
+    const input = document.getElementById('target-website-url');
+    input.addEventListener('input', function() {
+        if (this.value.trim() && isValidUrl(this.value.trim())) {
+            targetWebsiteUrl = this.value.trim();
+            document.querySelector('.btn-continue').disabled = false;
+        } else {
+            document.querySelector('.btn-continue').disabled = true;
+        }
+    });
+}
+
+function continueToExecution() {
+    if (!targetWebsiteUrl) {
+        showToast('Please select a target website.', 'warning');
+        return;
+    }
+    
+    goToStep(3);
+    scrollToSection('pipeline');
+}
+
+// Step 3: Execution
+function updateStep3() {
+    document.getElementById('test-count').textContent = `${generatedTests.length} tests ready`;
+    document.getElementById('target-summary').textContent = targetWebsiteUrl || 'No website selected';
+}
+
+async function executeTests() {
+    const btn = document.querySelector('.btn-execute');
+    const originalContent = btn.innerHTML;
+    
+    try {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Executing...</span>';
+        btn.disabled = true;
+        showLoading('Running test cases on target website...');
+        
+        // Simulate test execution
+        await new Promise(resolve => setTimeout(resolve, 4000));
+        
+        const results = generateMockResults();
+        displayResults(results);
+        
+        showToast('Test execution completed!', 'success');
+        
+    } catch (error) {
+        console.error('Error executing tests:', error);
+        showToast('Failed to execute tests. Please try again.', 'error');
+    } finally {
+        btn.innerHTML = originalContent;
+        btn.disabled = false;
+        hideLoading();
+    }
+}
+
+function generateMockResults() {
+    return generatedTests.map(test => ({
+        ...test,
+        status: Math.random() > 0.2 ? 'passed' : 'failed',
+        duration: Math.floor(Math.random() * 3000) + 500,
+        message: Math.random() > 0.2 ? 'Test completed successfully' : 'Assertion failed or element not found'
+    }));
+}
+
+function displayResults(results) {
+    const resultsSection = document.getElementById('results-section');
+    const resultsList = document.getElementById('results-list');
+    
+    const passed = results.filter(r => r.status === 'passed').length;
+    const failed = results.filter(r => r.status === 'failed').length;
+    const totalTime = results.reduce((sum, r) => sum + r.duration, 0);
+    
+    document.getElementById('passed-tests').textContent = passed;
+    document.getElementById('failed-tests').textContent = failed;
+    document.getElementById('execution-time').textContent = (totalTime / 1000).toFixed(1) + 's';
+    
+    resultsList.innerHTML = results.map(result => `
+        <div class="result-item ${result.status}">
+            <div class="result-icon">
+                <i class="fas ${result.status === 'passed' ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+            </div>
+            <div class="result-content">
+                <h5>${result.name}</h5>
+                <p><strong>Type:</strong> ${result.type} | <strong>Duration:</strong> ${result.duration}ms</p>
+                <p class="result-message">${result.message}</p>
+            </div>
+        </div>
+    `).join('');
+    
+    resultsSection.style.display = 'block';
+    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Utility Functions
 function scrollToSection(sectionId) {
     const element = document.getElementById(sectionId);
     if (element) {
-        const headerHeight = 70;
+        const headerHeight = 80;
         const elementPosition = element.offsetTop - headerHeight;
         
         window.scrollTo({
@@ -167,6 +423,79 @@ function scrollToSection(sectionId) {
             behavior: 'smooth'
         });
     }
+}
+
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
+
+function showLoading(message = 'Loading...') {
+    loadingText.textContent = message;
+    loadingOverlay.classList.add('show');
+}
+
+function hideLoading() {
+    loadingOverlay.classList.remove('show');
+}
+
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    const iconMap = {
+        success: 'fas fa-check-circle',
+        error: 'fas fa-exclamation-circle', 
+        warning: 'fas fa-exclamation-triangle',
+        info: 'fas fa-info-circle'
+    };
+    
+    const titleMap = {
+        success: 'Success',
+        error: 'Error', 
+        warning: 'Warning',
+        info: 'Info'
+    };
+    
+    toast.innerHTML = `
+        <div class="toast-header">
+            <i class="${iconMap[type]}"></i>
+            ${titleMap[type]}
+        </div>
+        <div class="toast-body">${message}</div>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    // Auto remove
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+        }
+    }, 5000);
+    
+    // Click to remove
+    toast.addEventListener('click', () => {
+        if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+        }
+    });
+}
+
+// Scroll Effects
+function setupScrollEffects() {
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('.modern-header');
+        if (window.scrollY > 50) {
+            header.style.background = 'rgba(15, 23, 42, 0.95)';
+        } else {
+            header.style.background = 'rgba(15, 23, 42, 0.8)';
+        }
+    });
 }
 
 // Generate test cases
