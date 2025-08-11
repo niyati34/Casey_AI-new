@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Casey AI Pipeline - Automated Test Generation & Runner</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">
+            <i class="fas fa-robot"></i>
+            <span>Casey AI</span>
+          </div>
+          <nav class="nav">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/pipeline" class="nav-link active">Pipeline</a>
+            <a href="#features" class="nav-link">Features</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- Pipeline Section -->
+    <section class="pipeline-section">
+      <div class="advanced-bg"></div>
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Casey AI Pipeline</h2>
+          <p class="section-subtitle">
+            Advanced test generation and execution pipeline with intelligent
+            workflow
+          </p>
+        </div>
+
+        <!-- Pipeline Progress -->
+        <div class="pipeline-progress">
+          <div class="progress-step active" data-step="1">
+            <div class="step-icon">
+              <i class="fas fa-upload"></i>
+            </div>
+            <div class="step-info">
+              <span class="step-number">01</span>
+              <span class="step-title">Input Source</span>
+            </div>
+          </div>
+          <div class="progress-connector"></div>
+          <div class="progress-step" data-step="2">
+            <div class="step-icon">
+              <i class="fas fa-cogs"></i>
+            </div>
+            <div class="step-info">
+              <span class="step-number">02</span>
+              <span class="step-title">Generate Tests</span>
+            </div>
+          </div>
+          <div class="progress-connector"></div>
+          <div class="progress-step" data-step="3">
+            <div class="step-icon">
+              <i class="fas fa-globe"></i>
+            </div>
+            <div class="step-info">
+              <span class="step-number">03</span>
+              <span class="step-title">Target Website</span>
+            </div>
+          </div>
+          <div class="progress-connector"></div>
+          <div class="progress-step" data-step="4">
+            <div class="step-icon">
+              <i class="fas fa-play"></i>
+            </div>
+            <div class="step-info">
+              <span class="step-number">04</span>
+              <span class="step-title">Execute Tests</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pipeline Steps -->
+        <div class="pipeline-container">
+          <!-- Step 1: Input Source Selection -->
+          <div id="step-1" class="pipeline-step active">
+            <div class="step-card">
+              <div class="step-header">
+                <h3><i class="fas fa-upload"></i> Choose Input Source</h3>
+                <p>Select how you want to generate test cases</p>
+              </div>
+
+              <div class="input-options">
+                <div class="input-option" data-input="figma">
+                  <div class="option-icon">
+                    <i class="fab fa-figma"></i>
+                  </div>
+                  <div class="option-content">
+                    <h4>Figma Design</h4>
+                    <p>Generate tests from Figma file key</p>
+                  </div>
+                  <div class="option-check">
+                    <i class="fas fa-check"></i>
+                  </div>
+                </div>
+
+                <div class="input-option" data-input="document">
+                  <div class="option-icon">
+                    <i class="fas fa-file-alt"></i>
+                  </div>
+                  <div class="option-content">
+                    <h4>SRS Document</h4>
+                    <p>Upload PDF, DOC, or DOCX files</p>
+                  </div>
+                  <div class="option-check">
+                    <i class="fas fa-check"></i>
+                  </div>
+                </div>
+
+                <div class="input-option" data-input="manual">
+                  <div class="option-icon">
+                    <i class="fas fa-keyboard"></i>
+                  </div>
+                  <div class="option-content">
+                    <h4>Manual Prompt</h4>
+                    <p>Describe your requirements manually</p>
+                  </div>
+                  <div class="option-check">
+                    <i class="fas fa-check"></i>
+                  </div>
+                </div>
+
+                <div class="input-option" data-input="website">
+                  <div class="option-icon">
+                    <i class="fas fa-link"></i>
+                  </div>
+                  <div class="option-content">
+                    <h4>Website URL</h4>
+                    <p>Analyze existing website structure</p>
+                  </div>
+                  <div class="option-check">
+                    <i class="fas fa-check"></i>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Input Forms -->
+              <div class="input-forms">
+                <!-- Figma Input -->
+                <div id="figma-form" class="input-form">
+                  <div class="form-group">
+                    <label for="figma-key">Figma File Key</label>
+                    <input
+                      type="text"
+                      id="figma-key"
+                      placeholder="Enter your Figma file key..."
+                      class="form-input"
+                    />
+                    <small class="form-hint"
+                      >Find the file key in your Figma file URL</small
+                    >
+                  </div>
+                </div>
+
+                <!-- Document Input -->
+                <div id="document-form" class="input-form">
+                  <div class="form-group">
+                    <label for="document-upload">Upload SRS Document</label>
+                    <div class="file-upload-area" id="file-upload-area">
+                      <input
+                        type="file"
+                        id="document-upload"
+                        accept=".pdf,.doc,.docx"
+                        class="file-input"
+                      />
+                      <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>
+                          Drag & drop your file here or
+                          <span class="upload-link">browse</span>
+                        </p>
+                        <small>Supports PDF, DOC, DOCX files (max 16MB)</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Manual Input -->
+                <div id="manual-form" class="input-form">
+                  <div class="form-group">
+                    <label for="manual-prompt">Manual Requirements</label>
+                    <textarea
+                      id="manual-prompt"
+                      placeholder="Describe your testing requirements in detail..."
+                      class="form-textarea"
+                    ></textarea>
+                    <small class="form-hint"
+                      >Provide detailed requirements for AI to generate relevant
+                      test cases</small
+                    >
+                  </div>
+                </div>
+
+                <!-- Website Input -->
+                <div id="website-form" class="input-form">
+                  <div class="form-group">
+                    <label for="source-website-url"
+                      >Website URL for Analysis</label
+                    >
+                    <input
+                      type="url"
+                      id="source-website-url"
+                      placeholder="https://example.com"
+                      class="form-input"
+                    />
+                    <small class="form-hint"
+                      >URL of the website to analyze for test generation</small
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="step-actions">
+                <button class="btn btn-primary" onclick="proceedToGeneration()">
+                  <i class="fas fa-arrow-right"></i>
+                  Proceed to Generation
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Generate Test Cases -->
+          <div id="step-2" class="pipeline-step">
+            <div class="step-card">
+              <div class="step-header">
+                <h3><i class="fas fa-cogs"></i> Generate Test Cases</h3>
+                <p>
+                  AI is analyzing your input and generating comprehensive test
+                  cases
+                </p>
+              </div>
+
+              <div class="generation-status">
+                <div class="status-item">
+                  <div class="status-icon">
+                    <i class="fas fa-brain"></i>
+                  </div>
+                  <div class="status-content">
+                    <h4>AI Analysis</h4>
+                    <p>Analyzing input source...</p>
+                  </div>
+                  <div class="status-progress">
+                    <div class="progress-bar">
+                      <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="step-actions">
+                <button class="btn btn-secondary" onclick="goBackToStep(1)">
+                  <i class="fas fa-arrow-left"></i>
+                  Back
+                </button>
+                <button
+                  class="btn btn-primary"
+                  onclick="generateTestCases()"
+                  id="generate-btn"
+                >
+                  <i class="fas fa-magic"></i>
+                  Generate Test Cases
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Target Website -->
+          <div id="step-3" class="pipeline-step">
+            <div class="step-card">
+              <div class="step-header">
+                <h3><i class="fas fa-globe"></i> Target Website</h3>
+                <p>Specify where you want to run the generated test cases</p>
+              </div>
+
+              <div class="website-options">
+                <div class="website-option">
+                  <input
+                    type="radio"
+                    id="use-source-url"
+                    name="website-source"
+                    value="source"
+                    checked
+                  />
+                  <label for="use-source-url" class="option-label">
+                    <div class="option-icon">
+                      <i class="fas fa-link"></i>
+                    </div>
+                    <div class="option-content">
+                      <h4>Use Source Website</h4>
+                      <p>Use the same website from test generation</p>
+                      <div class="source-url-display" id="source-url-display">
+                        <i class="fas fa-globe"></i>
+                        <span id="display-source-url"
+                          >No source URL available</span
+                        >
+                      </div>
+                    </div>
+                  </label>
+                </div>
+
+                <div class="website-option">
+                  <input
+                    type="radio"
+                    id="use-different-url"
+                    name="website-source"
+                    value="different"
+                  />
+                  <label for="use-different-url" class="option-label">
+                    <div class="option-icon">
+                      <i class="fas fa-external-link-alt"></i>
+                    </div>
+                    <div class="option-content">
+                      <h4>Different Website</h4>
+                      <p>Specify a different website URL</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div
+                class="target-url-form"
+                id="target-url-form"
+                style="display: none"
+              >
+                <div class="form-group">
+                  <label for="target-website-url">Target Website URL</label>
+                  <input
+                    type="url"
+                    id="target-website-url"
+                    placeholder="https://example.com"
+                    class="form-input"
+                  />
+                  <small class="form-hint"
+                    >URL where test cases will be executed</small
+                  >
+                </div>
+              </div>
+
+              <div class="testing-options">
+                <div class="testing-option">
+                  <label class="toggle-label">
+                    <input
+                      type="checkbox"
+                      id="live-testing-toggle"
+                      class="toggle-input"
+                    />
+                    <span class="toggle-slider"></span>
+                    <div class="toggle-content">
+                      <h4>Live Testing Mode</h4>
+                      <p>
+                        Execute tests on live website with real-time monitoring
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div class="step-actions">
+                <button class="btn btn-secondary" onclick="goBackToStep(2)">
+                  <i class="fas fa-arrow-left"></i>
+                  Back
+                </button>
+                <button class="btn btn-primary" onclick="proceedToExecution()">
+                  <i class="fas fa-arrow-right"></i>
+                  Setup Execution
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4: Execute Tests -->
+          <div id="step-4" class="pipeline-step">
+            <div class="step-card">
+              <div class="step-header">
+                <h3><i class="fas fa-play"></i> Execute Test Cases</h3>
+                <p>Running comprehensive test suite on your target website</p>
+              </div>
+
+              <div class="execution-summary">
+                <div class="summary-item">
+                  <div class="summary-icon">
+                    <i class="fas fa-list"></i>
+                  </div>
+                  <div class="summary-content">
+                    <h4>Test Cases Ready</h4>
+                    <p><span id="test-count">0</span> test cases generated</p>
+                  </div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-icon">
+                    <i class="fas fa-globe"></i>
+                  </div>
+                  <div class="summary-content">
+                    <h4>Target Website</h4>
+                    <p id="final-target-url">-</p>
+                  </div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-icon">
+                    <i class="fas fa-bolt"></i>
+                  </div>
+                  <div class="summary-content">
+                    <h4>Execution Mode</h4>
+                    <p id="execution-mode">Standard</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="step-actions">
+                <button class="btn btn-secondary" onclick="goBackToStep(3)">
+                  <i class="fas fa-arrow-left"></i>
+                  Back
+                </button>
+                <button
+                  class="btn btn-primary"
+                  onclick="executeTests()"
+                  id="execute-btn"
+                >
+                  <i class="fas fa-rocket"></i>
+                  Launch Test Execution
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results-section" class="results-section" style="display: none">
+          <div class="results-header">
+            <h4>Test Execution Results</h4>
+            <div class="results-summary">
+              <span class="result-stat passed">
+                <i class="fas fa-check-circle"></i>
+                <span id="passed-count">0</span> Passed
+              </span>
+              <span class="result-stat failed">
+                <i class="fas fa-times-circle"></i>
+                <span id="failed-count">0</span> Failed
+              </span>
+            </div>
+          </div>
+          <div id="test-results-list" class="test-results">
+            <!-- Test results will appear here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <p id="loading-text">Processing...</p>
+      </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>
