@@ -5,6 +5,7 @@ A professional, minimalistic web application for automated test generation and e
 ## Features
 
 - **Multi-Source Test Generation**: Generate tests from:
+
   - Figma file keys
   - Document uploads (PDF, DOC, DOCX)
   - Website URLs
@@ -25,17 +26,20 @@ A professional, minimalistic web application for automated test generation and e
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd Casey_AI-new
 ```
 
 2. Install dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
 3. Run the application:
+
 ```bash
 python app.py
 ```
@@ -48,6 +52,7 @@ python app.py
 
 1. Navigate to the "Try API" section
 2. Select your input source:
+
    - **Figma File**: Enter your Figma file key
    - **Document**: Upload a PDF, DOC, or DOCX file
    - **Website URL**: Enter a website URL to analyze
@@ -65,6 +70,7 @@ python app.py
 ## API Endpoints
 
 ### Generate Test Cases
+
 ```
 POST /api/generate-test
 Content-Type: application/json
@@ -79,6 +85,7 @@ Content-Type: application/json
 ```
 
 ### Run Test Cases
+
 ```
 POST /api/run-test
 Content-Type: application/json
@@ -91,6 +98,7 @@ Content-Type: application/json
 ```
 
 ### File Upload
+
 ```
 POST /api/upload
 Content-Type: multipart/form-data
@@ -125,7 +133,7 @@ Casey_AI-new/
 ## Color Scheme
 
 - **Primary Purple**: #6366f1
-- **Purple Light**: #8b5cf6  
+- **Purple Light**: #8b5cf6
 - **Purple Dark**: #4338ca
 - **White**: #ffffff
 - **Black**: #000000
@@ -134,12 +142,14 @@ Casey_AI-new/
 ## Features in Detail
 
 ### Responsive Design
+
 - Mobile-first approach
 - Breakpoints at 768px and 480px
 - Flexible grid layouts
 - Touch-friendly interface
 
 ### User Experience
+
 - Smooth scrolling navigation
 - Loading states and progress indicators
 - Toast notifications for user feedback
@@ -147,6 +157,7 @@ Casey_AI-new/
 - Form validation with helpful hints
 
 ### Performance
+
 - Optimized CSS with efficient selectors
 - Minimal JavaScript footprint
 - Lazy loading for better performance

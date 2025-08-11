@@ -15,6 +15,10 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 def index():
     return render_template('index.html')
 
+@app.route('/pipeline')
+def pipeline():
+    return render_template('pipeline.html')
+
 @app.route('/api/generate-test', methods=['POST'])
 def generate_test():
     """API endpoint for generating test cases"""
@@ -41,12 +45,12 @@ def generate_test():
                 'tests': []
             })
         
-        elif test_type == 'prompt':
+        elif test_type == 'manual':
             manual_prompt = data.get('manual_prompt')
-            # TODO: Implement prompt-based test generation logic
+            # TODO: Implement manual prompt-based test generation logic
             return jsonify({
                 'status': 'success',
-                'message': 'Test cases generated from manual prompt',
+                'message': f'Test cases generated from manual requirements',
                 'tests': []
             })
         
