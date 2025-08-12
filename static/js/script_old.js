@@ -48,9 +48,6 @@ function initializeEventListeners() {
 
 // Pipeline functionality
 function initializePipeline() {
-  // Set initial selected input type
-  selectedInputType = currentTabInput;
-
   // Input option selection
   document.querySelectorAll(".input-option").forEach((option) => {
     option.addEventListener("click", function () {
