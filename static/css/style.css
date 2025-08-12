@@ -575,13 +575,13 @@ body {
 /* World-Class Pipeline Container - SMALLER ROUND CIRCLE */
 .pipeline-container {
   width: 85vw; /* Smaller circle */
-  max-width: 800px; /* Reduced max size */
+  max-width: 860px; /* Reduced max size */
   height: 85vw; /* Same as width for perfect circle */
-  max-height: 800px; /* Same as max-width */
+  max-height: 860px; /* Same as max-width */
   margin: 40px auto 0; /* Center horizontally */
   position: relative;
-  padding: 50px; /* Reduced padding */
-
+  padding: 10px; /* Reduced padding */
+  margin-top: 0;
   /* Flexbox to center content inside circle */
   display: flex;
   align-items: center;
@@ -604,9 +604,11 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
 
   /* Premium shadow system */
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 16px 50px rgba(0, 0, 0, 0.35),
-    /* Reduced shadow for subtlety */ inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 80px 24px rgba(255, 255, 255, 0.55),
+    /* intense white glow */ 0 0 24px 8px rgba(255, 255, 255, 0.35),
+    /* secondary white glow */ 0 8px 32px rgba(0, 0, 0, 0.18),
+    /* subtle dark shadow for depth */ 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 16px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 
   /* Subtle overlay for depth */
   overflow: hidden;
@@ -647,7 +649,7 @@ body {
   margin: 0; /* Remove margins */
   background: rgba(255, 255, 255, 0.02); /* Subtle inner background */
   border-radius: 45px; /* Round inner content background */
-  padding: 25px;
+  /* padding: 25px; */
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.03);
 }
@@ -1304,6 +1306,9 @@ body {
   margin-bottom: 24px;
 }
 
+#document-form .form-group label {
+  margin-left: 18px;
+}
 .form-group label {
   display: block;
   font-size: 14px;
@@ -1340,21 +1345,24 @@ body {
 
 .form-group textarea {
   resize: vertical;
-  min-height: 120px;
+  min-height: 90px;
   font-family: inherit;
 }
 
-/* Upload Area */
+/* Upload Area - Smaller Size */
 .upload-area {
   border: 2px dashed rgba(142, 121, 255, 0.3);
-  border-radius: 40px; /* Super round upload area! */
-  padding: 40px 20px;
+  border-radius: 25px; /* Smaller border radius */
+  padding: 25px 15px; /* Reduced padding */
   text-align: center;
   background: rgba(255, 255, 255, 0.02);
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  max-width: 400px; /* Set maximum width */
+  height: 120px; /* Set fixed smaller height */
+  margin: 0 auto; /* Center the upload area */
 }
 
 .upload-area::before {
@@ -1390,23 +1398,23 @@ body {
 }
 
 .upload-icon {
-  font-size: 48px;
+  font-size: 32px; /* Smaller icon */
   color: #8e79ff;
-  margin-bottom: 16px;
+  margin-bottom: 8px; /* Reduced margin */
   display: block;
 }
 
 .upload-content h4 {
-  font-size: 18px;
+  font-size: 14px; /* Smaller font */
   font-weight: 600;
   color: var(--text-white);
-  margin-bottom: 8px;
+  margin-bottom: 4px; /* Reduced margin */
 }
 
 .upload-content p {
   color: rgba(255, 255, 255, 0.7);
-  font-size: 14px;
-  margin-bottom: 16px;
+  font-size: 11px; /* Smaller font */
+  margin-bottom: 8px; /* Reduced margin */
 }
 
 /* Action Buttons - Improved Gradient (Palette-aligned) */
@@ -1914,17 +1922,29 @@ body {
   margin-top: 6px;
   line-height: 1.4;
 }
+#document-form.input-form {
+  padding: 17px;
+}
+#manual-form.input-form {
+  padding: 22px;
+}
 
-/* File Upload */
+/* File Upload - Smaller Size */
 .file-upload-area {
   border: 2px dashed var(--gray-300);
   border-radius: var(--radius-md);
-  padding: var(--spacing-8);
+  padding: 20px; /* Reduced padding */
   text-align: center;
   transition: var(--transition-fast);
   cursor: pointer;
   position: relative;
-  background: var(--gray-50);
+  background: var(--panel-dark);
+  max-width: 660px; /* Set maximum width */
+  height: 100px; /* Set fixed smaller height */
+  margin: 0 auto; /* Center the upload area */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .file-upload-area:hover {
@@ -1948,14 +1968,15 @@ body {
 }
 
 .upload-content i {
-  font-size: var(--font-size-3xl);
+  font-size: 24px; /* Smaller icon */
   color: var(--gray-400);
-  margin-bottom: var(--spacing-4);
+  margin-bottom: 8px; /* Reduced margin */
 }
 
 .upload-content p {
-  color: var(--gray-600);
-  margin-bottom: var(--spacing-2);
+  /* //color: var(--gray-600); */
+  margin-bottom: 4px; /* Reduced margin */
+  font-size: 12px; /* Smaller font size */
 }
 
 .upload-link {
