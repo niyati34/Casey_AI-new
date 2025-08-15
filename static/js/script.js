@@ -593,7 +593,7 @@ function updateUploadUI(contentElement, fileName) {
     `;
 }
 
-// NEW: Function to parse uploaded test cases
+// MODIFIED: Function to parse uploaded test cases and display them
 async function parseAndLoadTests(file) {
     showLoading("Parsing your test case file...");
     const formData = new FormData();
@@ -608,7 +608,9 @@ async function parseAndLoadTests(file) {
         const result = await response.json();
         if (result.status === "success" && result.tests) {
             selectedTestCases = result.tests;
-            displaySelectedTestCases(); // Display the parsed tests
+            // The line below was removed to prevent displaying the list inside the circle.
+            // displaySelectedTestCases(); 
+            displayParsedTestsBelowCircle(result.tests);
             showToast(`Successfully parsed ${result.tests.length} test cases.`, "success");
         } else {
             throw new Error(result.message || "Failed to parse test cases from file.");
@@ -617,10 +619,46 @@ async function parseAndLoadTests(file) {
         console.error("Error parsing file:", error);
         showToast(error.message, "error");
         selectedTestCases = []; // Clear any partial data
-        displaySelectedTestCases(); // Update UI to show no tests
+        // The line below was removed to prevent displaying an empty list inside the circle on error.
+        // displaySelectedTestCases(); 
+        displayParsedTestsBelowCircle([]);
     } finally {
         hideLoading();
     }
+}
+
+// NEW: Function to display parsed test titles below the main circle
+function displayParsedTestsBelowCircle(tests) {
+    const container = document.getElementById('parsed-tests-display-container');
+    if (!container) return;
+
+    if (tests.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    let contentHTML = `
+        <div class="accordion-header">
+            <h3>Test Cases Ready for Execution</h3>
+        </div>
+        <ul id="parsed-tests-list">
+    `;
+
+    tests.forEach(test => {
+        contentHTML += `
+            <li class="parsed-test-item">
+                <i class="fas fa-vial"></i>
+                <span>${test.id}: ${test.name}</span>
+            </li>
+        `;
+    });
+
+    contentHTML += '</ul>';
+    container.innerHTML = contentHTML;
+    container.style.display = 'block';
+
+    // Smoothly scroll to the new section
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 

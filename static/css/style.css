@@ -2627,3 +2627,33 @@ body {
 #selected-tests-list li:last-child {
     border-bottom: none;
 }
+
+/* --- NEW STYLES FOR PARSED TEST LIST --- */
+#parsed-tests-list {
+    list-style: none;
+    padding: 10px;
+}
+
+.parsed-test-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.parsed-test-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--panel-core);
+    transform: translateX(5px);
+}
+
+.parsed-test-item i {
+    color: var(--panel-core);
+}

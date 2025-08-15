@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request, jsonify, send_file
 import os
-from docx import Document
-import pdfplumber
 import json
 
 # Import the new test case generation function
 from test_case_generation import generate_test_cases
-from llm_utils import get_llm, invoke_llm_for_json
+# --- NEW: Import from our new document parser file ---
+from document_parser import read_file_content, parse_document_for_tests
 
 app = Flask(__name__)
 
@@ -16,7 +15,7 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # NEW: 2MB max file size
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB max file size
 
 @app.route('/')
 def index():
@@ -52,9 +51,9 @@ def handle_generate_test():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
-# --- REVISED AND MORE ROBUST ENDPOINT ---
+# --- REFACTORED ENDPOINT USING THE NEW PARSER ---
 @app.route('/api/parse-tests-from-file', methods=['POST'])
-def parse_tests_from_file():
+def parse_tests_from_file_endpoint():
     """
     API endpoint for parsing test cases from an uploaded DOCX or PDF file.
     """
@@ -66,66 +65,29 @@ def parse_tests_from_file():
         if file.filename == '':
             return jsonify({'status': 'error', 'message': 'No file selected'}), 400
         
-        # Server-side check for file size
-        if len(file.read()) > app.config['MAX_CONTENT_LENGTH']:
+        file.seek(0, os.SEEK_END)
+        file_size = file.tell()
+        file.seek(0)
+        if file_size > app.config['MAX_CONTENT_LENGTH']:
             return jsonify({'status': 'error', 'message': 'File exceeds the 2MB size limit.'}), 413
-        file.seek(0) # Reset file pointer after reading
 
-        file_content = ""
-        if file.filename.lower().endswith('.docx'):
-            doc = Document(file)
-            file_content = "\n".join([para.text for para in doc.paragraphs])
-        elif file.filename.lower().endswith('.pdf'):
-            with pdfplumber.open(file) as pdf:
-                for page in pdf.pages:
-                    # Added a check for None return from extract_text
-                    text = page.extract_text()
-                    if text:
-                        file_content += text + "\n"
-        else:
-            return jsonify({'status': 'error', 'message': 'Unsupported file type. Please use .docx or .pdf'}), 400
-
+        file_content = read_file_content(file)
         if not file_content.strip():
-            return jsonify({'status': 'error', 'message': 'Could not extract any text from the uploaded file'}), 500
+            return jsonify({'status': 'error', 'message': 'Could not extract any text from the uploaded file or the file type is unsupported.'}), 400
 
-        llm = get_llm()
-        if not llm:
-            return jsonify({'status': 'error', 'message': 'LLM could not be initialized'}), 500
+        all_tests = parse_document_for_tests(file_content)
 
-        prompt_template = """
-            Please analyze the following text which contains a list of test cases.
-            Extract the test cases and convert them into a valid JSON array of objects.
-            The final output must be ONLY the JSON array and nothing else. Do not include any text, notes, or formatting outside of this JSON array (e.g., no "```json" wrapper).
-
-            Each object in the array must have the following keys:
-            - "id": A unique integer for the test case, starting from 1.
-            - "name": A short, descriptive name for the test.
-            - "description": A detailed explanation of what the test verifies.
-            - "type": The category of the test (e.g., "UI Interaction", "Form Validation", "User Flow").
-            - "inputs": An array of objects representing input data. Each object should have a "selector" and a "value". If no inputs are described, make this an empty array.
-            - "selector": A suggested CSS selector for the primary element to be tested, if applicable.
-
-            Here is the text from the document:
-            ---
-            {document_text}
-            ---
-        """
-        
-        parsed_tests = invoke_llm_for_json(llm, prompt_template, {"document_text": file_content})
-
-        if isinstance(parsed_tests, dict) and 'error' in parsed_tests:
-            error_detail = parsed_tests.get('details', 'Failed to parse tests using LLM.')
-            return jsonify({'status': 'error', 'message': f"LLM parsing failed: {error_detail}"}), 500
-        
-        if not isinstance(parsed_tests, list):
-             return jsonify({'status': 'error', 'message': 'The LLM did not return a valid list of test cases.'}), 500
+        if not all_tests:
+            return jsonify({'status': 'error', 'message': 'No valid test cases could be extracted from the document.'}), 500
 
         return jsonify({
             'status': 'success',
             'message': 'Test cases parsed successfully!',
-            'tests': parsed_tests
+            'tests': all_tests
         })
 
+    except ConnectionError as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
     except Exception as e:
         return jsonify({'status': 'error', 'message': f"An unexpected server error occurred: {str(e)}"}), 500
 
