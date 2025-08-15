@@ -269,10 +269,6 @@
               </div>
 
               <div class="step-actions">
-                <button class="btn btn-secondary" onclick="goBackToStep(1)">
-                  <i class="fas fa-arrow-left"></i>
-                  Back
-                </button>
                 <button
                   class="btn btn-primary"
                   onclick="generateTestCases()"
@@ -280,6 +276,15 @@
                 >
                   <i class="fas fa-magic"></i>
                   Generate Test Cases
+                </button>
+                <!-- New buttons, initially hidden -->
+                <button class="btn btn-secondary" onclick="downloadTests()" id="download-btn" style="display: none;">
+                    <i class="fas fa-download"></i>
+                    Download Test Cases
+                </button>
+                <button class="btn btn-primary" onclick="goToStep(3)" id="next-step-btn" style="display: none;">
+                  <i class="fas fa-arrow-right"></i>
+                  Move Forward
                 </button>
               </div>
             </div>
@@ -291,6 +296,11 @@
               <div class="step-header">
                 <h3><i class="fas fa-globe"></i> Target Website</h3>
                 <p>Specify where you want to run the generated test cases</p>
+              </div>
+
+              <!-- Container for selected tests -->
+              <div id="selected-tests-display-area">
+                  <!-- Selected tests will be displayed here by script.js -->
               </div>
 
               <div class="website-options">
@@ -445,10 +455,16 @@
           </div>
         </div>
 
+        <!-- NEW: Accordion Container -->
+        <div id="test-case-accordion-container" class="accordion-container" style="display: none;">
+            <!-- Accordion will be inserted here by script.js -->
+        </div>
+
         <!-- Results Section -->
         <div id="results-section" class="results-section" style="display: none">
           <div class="results-header">
             <h4>Test Execution Results</h4>
+            <div class="results-actions"></div>
             <div class="results-summary">
               <span class="result-stat passed">
                 <i class="fas fa-check-circle"></i>

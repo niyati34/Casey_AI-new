@@ -1,2 +1,5 @@
 flask
 flask-cors
+langchain-google-genai
+python-docx
+python-dotenv

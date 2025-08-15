@@ -1,5 +1,9 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 import os
+from docx import Document
+
+# Import the new test case generation function
+from test_case_generation import generate_test_cases
 
 app = Flask(__name__)
 
@@ -20,60 +24,36 @@ def pipeline():
     return render_template('pipeline.html')
 
 @app.route('/api/generate-test', methods=['POST'])
-def generate_test():
-    """API endpoint for generating test cases"""
+def handle_generate_test():
+    """
+    API endpoint for generating test cases using the LLM.
+    """
     try:
         data = request.get_json()
         test_type = data.get('test_type')
         
-        if test_type == 'figma':
-            figma_key = data.get('figma_key')
-            # TODO: Implement Figma test generation logic
-            return jsonify({
-                'status': 'success',
-                'message': f'Test cases generated from Figma file: {figma_key}',
-                'tests': []
-            })
+        if not test_type:
+            return jsonify({'status': 'error', 'message': 'test_type is required'}), 400
+
+        # --- UPDATED LOGIC ---
+        # Call the primary function from your test generation module
+        # This replaces the old if/elif block
+        test_cases = generate_test_cases(test_type, data)
         
-        elif test_type == 'document':
-            file_content = data.get('file_content')
-            file_name = data.get('file_name')
-            # TODO: Implement document-based test generation logic
-            return jsonify({
-                'status': 'success',
-                'message': f'Test cases generated from document: {file_name}',
-                'tests': []
-            })
-        
-        elif test_type == 'manual':
-            manual_prompt = data.get('manual_prompt')
-            # TODO: Implement manual prompt-based test generation logic
-            return jsonify({
-                'status': 'success',
-                'message': f'Test cases generated from manual requirements',
-                'tests': []
-            })
-        
-        elif test_type == 'website':
-            website_url = data.get('website_url')
-            # TODO: Implement website-based test generation logic
-            return jsonify({
-                'status': 'success',
-                'message': f'Test cases generated from website: {website_url}',
-                'tests': []
-            })
-        
-        else:
-            return jsonify({
-                'status': 'error',
-                'message': 'Invalid test type'
-            }), 400
-            
-    except Exception as e:
+        # Check for errors returned from the generation logic
+        if isinstance(test_cases, dict) and 'error' in test_cases:
+            # If the LLM utility returned an error, send it back to the client
+            return jsonify({'status': 'error', 'message': test_cases['details']}), 500
+
         return jsonify({
-            'status': 'error',
-            'message': str(e)
-        }), 500
+            'status': 'success',
+            'message': 'Test cases generated successfully!',
+            'tests': test_cases
+        })
+
+    except Exception as e:
+        # General error handler for unexpected issues
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/run-test', methods=['POST'])
 def run_test():
@@ -87,7 +67,7 @@ def run_test():
         return jsonify({
             'status': 'success',
             'message': f'Tests executed on website: {website_url}',
-            'results': []
+            'results': [] # Placeholder for actual test results
         })
         
     except Exception as e:
@@ -101,23 +81,20 @@ def upload_file():
     """API endpoint for file uploads"""
     try:
         if 'file' not in request.files:
-            return jsonify({
-                'status': 'error',
-                'message': 'No file uploaded'
-            }), 400
+            return jsonify({'status': 'error', 'message': 'No file uploaded'}), 400
         
         file = request.files['file']
         if file.filename == '':
-            return jsonify({
-                'status': 'error',
-                'message': 'No file selected'
-            }), 400
+            return jsonify({'status': 'error', 'message': 'No file selected'}), 400
         
         if file:
             filename = file.filename
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             
+            # For now, we just confirm the upload.
+            # A more advanced implementation would read the file content here
+            # and pass it to the generate_test_cases function.
             return jsonify({
                 'status': 'success',
                 'message': 'File uploaded successfully',
@@ -125,10 +102,41 @@ def upload_file():
             })
             
     except Exception as e:
-        return jsonify({
-            'status': 'error',
-            'message': str(e)
-        }), 500
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+# --- UPDATED ENDPOINT ---
+@app.route('/api/download-tests', methods=['POST'])
+def download_tests():
+    """
+    API endpoint for generating and downloading a DOCX of test cases.
+    """
+    try:
+        data = request.get_json()
+        test_cases = data.get('test_cases', [])
+
+        if not test_cases:
+            return jsonify({'status': 'error', 'message': 'No test cases provided'}), 400
+
+        # Create a DOCX document
+        document = Document()
+        document.add_heading('Generated Test Cases', 0)
+        
+        for test in test_cases:
+            document.add_heading(f"ID: {test.get('id', 'N/A')} - {test.get('name', 'No Name')}", level=1)
+            document.add_paragraph(f"Description: {test.get('description', 'No Description')}")
+            document.add_paragraph(f"Type: {test.get('type', 'N/A')}")
+            document.add_paragraph(f"Selector: {test.get('selector', 'N/A')}")
+            document.add_paragraph() # Add a little space between test cases
+        
+        # Save the DOCX to a temporary file
+        doc_output_path = "generated_test_cases.docx"
+        document.save(doc_output_path)
+        
+        # Send the file to the client for download
+        return send_file(doc_output_path, as_attachment=True)
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

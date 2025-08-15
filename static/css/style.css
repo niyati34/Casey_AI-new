@@ -2491,3 +2491,120 @@ body {
 .form-textarea {
   transition: all 0.3s ease;
 }
+
+/* --- NEW ACCORDION STYLES --- */
+.accordion-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: rgba(15, 17, 22, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 20px;
+    backdrop-filter: blur(15px);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.accordion-header h3 {
+    font-size: var(--font-size-xl);
+    color: var(--text-white);
+}
+
+.accordion-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.accordion-button {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 15px 20px;
+    text-align: left;
+    color: var(--text-dim);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.accordion-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.accordion-button i {
+    transition: transform 0.3s ease;
+}
+
+.accordion-button.active i {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    padding: 0 20px 20px 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+}
+
+.accordion-content.active {
+    max-height: 500px; /* Adjust as needed */
+}
+
+.accordion-content p {
+    margin-bottom: 10px;
+    color: var(--text-dim);
+    line-height: 1.6;
+}
+
+.accordion-content p strong {
+    color: var(--text-white);
+    font-weight: 600;
+}
+
+.accordion-content code {
+    background: var(--panel-dark);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+#selected-tests-display-area {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#selected-tests-display-area h4 {
+    margin-bottom: 15px;
+    font-size: var(--font-size-lg);
+}
+
+#selected-tests-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+#selected-tests-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#selected-tests-list li:last-child {
+    border-bottom: none;
+}

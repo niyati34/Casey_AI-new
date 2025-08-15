@@ -1,6 +1,7 @@
 // Global variables
 let currentTabInput = "figma";
 let generatedTests = [];
+let selectedTestCases = []; // To store test cases selected for live testing
 let currentStep = 1;
 let sourceWebsiteUrl = "";
 let selectedInputType = "";
@@ -131,6 +132,11 @@ function goToStep(stepNumber) {
       step.classList.add("active");
     }
   });
+  
+  // If moving to step 3, display the selected test cases
+  if (stepNumber === 3) {
+      displaySelectedTestCases();
+  }
 }
 
 function goBackToStep(stepNumber) {
@@ -218,9 +224,12 @@ function updateSourceUrlDisplay() {
 
 async function generateTestCases() {
   const generateBtn = document.getElementById("generate-btn");
-  const originalText = generateBtn.innerHTML;
+  const downloadBtn = document.getElementById("download-btn");
+  const nextStepBtn = document.getElementById("next-step-btn");
+  
   const progressFill = document.querySelector(".progress-fill");
   const statusContent = document.querySelector(".status-content p");
+  let progressInterval;
 
   try {
     // Show loading state
@@ -230,7 +239,7 @@ async function generateTestCases() {
 
     // Animate progress
     let progress = 0;
-    const progressInterval = setInterval(() => {
+    progressInterval = setInterval(() => {
       progress += Math.random() * 15;
       if (progress > 90) progress = 90;
       progressFill.style.width = progress + "%";
@@ -265,26 +274,30 @@ async function generateTestCases() {
     statusContent.textContent = "Test cases generated successfully!";
 
     if (result.status === "success") {
-      generatedTests = result.tests || generateMockTests(selectedInputType);
+      generatedTests = result.tests;
       showToast(
         `Generated ${generatedTests.length} test cases successfully!`,
         "success"
       );
 
-      // Auto-proceed to next step after a short delay
-      setTimeout(() => {
-        goToStep(3);
-      }, 1500);
+      // Hide the generate button and show the download/next step buttons
+      generateBtn.style.display = 'none';
+      downloadBtn.style.display = 'inline-flex';
+      nextStepBtn.style.display = 'inline-flex';
+      
+      // Display the accordion
+      displayTestCasesAccordion();
+
     } else {
-      throw new Error(result.message);
+      throw new Error(result.message || "An unknown error occurred during generation.");
     }
   } catch (error) {
     console.error("Error generating tests:", error);
-    showToast("Failed to generate test cases. Please try again.", "error");
-    clearInterval(progressInterval);
-  } finally {
-    // Reset button state
-    generateBtn.innerHTML = originalText;
+    showToast(error.message, "error");
+    if(progressInterval) clearInterval(progressInterval);
+    
+    // Reset button state on error
+    generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate Test Cases';
     generateBtn.disabled = false;
   }
 }
@@ -298,8 +311,11 @@ function getInputData() {
       break;
     case "document":
       const fileInput = document.getElementById("document-upload");
-      inputData.file_name = fileInput.files[0].name;
-      inputData.file_content = "File content will be processed";
+      if (fileInput.files.length > 0) {
+        inputData.file_name = fileInput.files[0].name;
+        // The backend will handle reading the uploaded file's content
+        inputData.file_content = "File content will be processed on the server.";
+      }
       break;
     case "manual":
       inputData.manual_prompt = document
@@ -317,6 +333,13 @@ function getInputData() {
 }
 
 function proceedToExecution() {
+  // --- NEW VALIDATION ---
+  // Prevent moving to step 4 without selecting any test cases
+  if (selectedTestCases.length === 0) {
+      showToast("Please go back and add at least one test case to execute.", "warning");
+      return;
+  }
+
   // Validate website selection
   const useSourceUrl = document.getElementById("use-source-url").checked;
   const useDifferentUrl = document.getElementById("use-different-url").checked;
@@ -350,7 +373,7 @@ function proceedToExecution() {
 }
 
 function updateExecutionSummary(targetUrl) {
-  document.getElementById("test-count").textContent = generatedTests.length;
+  document.getElementById("test-count").textContent = selectedTestCases.length;
   document.getElementById("final-target-url").textContent = targetUrl;
 
   const liveTestingEnabled = document.getElementById(
@@ -389,7 +412,7 @@ async function executeTests() {
       },
       body: JSON.stringify({
         website_url: targetUrl,
-        test_cases: generatedTests,
+        test_cases: selectedTestCases, // Use selected test cases
         live_testing: liveTestingEnabled,
       }),
     });
@@ -397,7 +420,7 @@ async function executeTests() {
     const result = await response.json();
 
     if (result.status === "success") {
-      const testResults = result.results || generateMockResults(generatedTests);
+      const testResults = result.results || [];
       displayTestResults(testResults);
       showToast("Test execution completed!", "success");
     } else {
@@ -420,36 +443,29 @@ function initializeFileUpload() {
   const fileInput = document.getElementById("document-upload");
 
   // Click to upload
-  fileUploadArea.addEventListener("click", function () {
-    fileInput.click();
-  });
+  fileUploadArea.addEventListener("click", () => fileInput.click());
 
   // Drag and drop
-  fileUploadArea.addEventListener("dragover", function (e) {
+  fileUploadArea.addEventListener("dragover", (e) => {
     e.preventDefault();
-    this.classList.add("dragover");
+    e.currentTarget.classList.add("dragover");
   });
 
-  fileUploadArea.addEventListener("dragleave", function (e) {
+  fileUploadArea.addEventListener("dragleave", (e) => {
     e.preventDefault();
-    this.classList.remove("dragover");
+    e.currentTarget.classList.remove("dragover");
   });
 
-  fileUploadArea.addEventListener("drop", function (e) {
+  fileUploadArea.addEventListener("drop", (e) => {
     e.preventDefault();
-    this.classList.remove("dragover");
-
+    e.currentTarget.classList.remove("dragover");
     const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      handleFileSelect(files[0]);
-    }
+    if (files.length > 0) handleFileSelect(files[0]);
   });
 
   // File input change
-  fileInput.addEventListener("change", function () {
-    if (this.files.length > 0) {
-      handleFileSelect(this.files[0]);
-    }
+  fileInput.addEventListener("change", (e) => {
+    if (e.target.files.length > 0) handleFileSelect(e.target.files[0]);
   });
 }
 
@@ -463,23 +479,20 @@ function handleFileSelect(file) {
     return;
   }
 
-  if (file.size > 16 * 1024 * 1024) {
-    // 16MB
+  if (file.size > 16 * 1024 * 1024) { // 16MB
     showToast("File size must be less than 16MB.", "error");
     return;
   }
 
   // Update UI to show selected file
-  const uploadContent = document.querySelector(
-    "#document-input .upload-content"
-  );
+  const uploadContent = document.querySelector("#file-upload-area .upload-content");
   uploadContent.innerHTML = `
-        <i class="fas fa-file-check"></i>
+        <i class="fas fa-file-check" style="color: #10b981;"></i>
         <p><strong>${file.name}</strong></p>
-        <small>File selected successfully</small>
+        <small>Click again or drag to replace</small>
     `;
 
-  showToast("File uploaded successfully!", "success");
+  showToast("File selected successfully!", "success");
 }
 
 // Smooth scrolling function
@@ -488,387 +501,210 @@ function scrollToSection(sectionId) {
   if (element) {
     const headerHeight = 70;
     const elementPosition = element.offsetTop - headerHeight;
-
-    window.scrollTo({
-      top: elementPosition,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: elementPosition, behavior: "smooth" });
   }
 }
 
-// Generate test cases
-async function generateTests() {
-  const generateBtn = document.querySelector(".btn-generate");
-  const originalText = generateBtn.innerHTML;
+// --- ACCORDION FUNCTIONS ---
+function displayTestCasesAccordion() {
+    const container = document.getElementById('test-case-accordion-container');
+    if (!container) return;
 
-  try {
-    // Validate input based on current tab
-    const inputData = validateAndGetInputData();
-    if (!inputData) return;
-
-    // Show loading state
-    generateBtn.innerHTML =
-      '<i class="fas fa-spinner fa-spin"></i> Generating...';
-    generateBtn.disabled = true;
-    showLoading("Generating test cases...");
-
-    // Make API call
-    const response = await fetch("/api/generate-test", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(inputData),
-    });
-
-    const result = await response.json();
-
-    if (result.status === "success") {
-      generatedTests = result.tests || generateMockTests(inputData.test_type);
-      displayGeneratedTests(generatedTests);
-      showToast(result.message, "success");
-    } else {
-      throw new Error(result.message);
-    }
-  } catch (error) {
-    console.error("Error generating tests:", error);
-    showToast("Failed to generate test cases. Please try again.", "error");
-  } finally {
-    // Reset button state
-    generateBtn.innerHTML = originalText;
-    generateBtn.disabled = false;
-    hideLoading();
-  }
-}
-
-// Validate input data based on current tab
-function validateAndGetInputData() {
-  let inputData = { test_type: currentTabInput };
-
-  switch (currentTabInput) {
-    case "figma":
-      const figmaKey = document.getElementById("figma-key").value.trim();
-      if (!figmaKey) {
-        showToast("Please enter a Figma file key.", "warning");
-        return null;
-      }
-      inputData.figma_key = figmaKey;
-      break;
-
-    case "document":
-      const fileInput = document.getElementById("document-upload");
-      if (!fileInput.files.length) {
-        showToast("Please select a document file.", "warning");
-        return null;
-      }
-      inputData.file_name = fileInput.files[0].name;
-      inputData.file_content = "File content will be processed"; // Placeholder
-      break;
-
-    case "website":
-      const websiteUrl = document.getElementById("website-url").value.trim();
-      if (!websiteUrl) {
-        showToast("Please enter a website URL.", "warning");
-        return null;
-      }
-      if (!isValidUrl(websiteUrl)) {
-        showToast("Please enter a valid URL.", "warning");
-        return null;
-      }
-      inputData.website_url = websiteUrl;
-      break;
-  }
-
-  return inputData;
-}
-
-// Generate mock test cases for demonstration
-function generateMockTests(testType) {
-  const mockTests = {
-    figma: [
-      {
-        id: 1,
-        name: "Button Click Test",
-        description:
-          "Verify that the primary button is clickable and triggers the expected action",
-        type: "UI Interaction",
-        selector: ".btn-primary",
-      },
-      {
-        id: 2,
-        name: "Form Validation Test",
-        description:
-          "Check that form validation works correctly for required fields",
-        type: "Form Validation",
-        selector: "form input[required]",
-      },
-      {
-        id: 3,
-        name: "Responsive Design Test",
-        description:
-          "Ensure the design is responsive across different screen sizes",
-        type: "Responsive",
-        selector: ".responsive-container",
-      },
-    ],
-    document: [
-      {
-        id: 1,
-        name: "User Registration Flow",
-        description:
-          "Test the complete user registration process as described in requirements",
-        type: "User Flow",
-        selector: ".registration-form",
-      },
-      {
-        id: 2,
-        name: "Data Validation Test",
-        description:
-          "Verify that data validation rules match the documented specifications",
-        type: "Data Validation",
-        selector: "input[data-validation]",
-      },
-      {
-        id: 3,
-        name: "API Integration Test",
-        description: "Test API endpoints as documented in the specification",
-        type: "API Testing",
-        selector: ".api-endpoint",
-      },
-    ],
-    website: [
-      {
-        id: 1,
-        name: "Navigation Test",
-        description: "Verify that all navigation links work correctly",
-        type: "Navigation",
-        selector: "nav a",
-      },
-      {
-        id: 2,
-        name: "Page Load Test",
-        description: "Check that all pages load within acceptable time limits",
-        type: "Performance",
-        selector: "body",
-      },
-      {
-        id: 3,
-        name: "Contact Form Test",
-        description: "Test contact form submission and validation",
-        type: "Form Testing",
-        selector: ".contact-form",
-      },
-    ],
-  };
-
-  return mockTests[testType] || [];
-}
-
-// Display generated test cases
-function displayGeneratedTests(tests) {
-  const resultsSection = document.getElementById("generate-results");
-  const testCasesList = document.getElementById("test-cases-list");
-
-  if (tests.length === 0) {
-    testCasesList.innerHTML =
-      '<p class="text-center text-gray-500">No test cases generated.</p>';
-  } else {
-    testCasesList.innerHTML = tests
-      .map(
-        (test) => `
-            <div class="test-case">
-                <h5>${test.name}</h5>
-                <p><strong>Type:</strong> ${test.type}</p>
-                <p><strong>Description:</strong> ${test.description}</p>
-                ${
-                  test.selector
-                    ? `<p><strong>Selector:</strong> <code>${test.selector}</code></p>`
-                    : ""
-                }
-            </div>
-        `
-      )
-      .join("");
-  }
-
-  resultsSection.style.display = "block";
-  resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-// Run test cases
-async function runTests() {
-  const runBtn = document.querySelector(".btn-run");
-  const originalText = runBtn.innerHTML;
-
-  try {
-    // Validate input
-    const websiteUrl = document.getElementById("test-website-url").value.trim();
-    const testCasesInput = document
-      .getElementById("test-cases-input")
-      .value.trim();
-    const liveTestingEnabled = document.getElementById(
-      "live-testing-toggle"
-    ).checked;
-
-    if (!websiteUrl) {
-      showToast("Please enter a website URL.", "warning");
-      return;
-    }
-
-    if (!isValidUrl(websiteUrl)) {
-      showToast("Please enter a valid URL.", "warning");
-      return;
-    }
-
-    let testCases = [];
-    if (testCasesInput) {
-      try {
-        testCases = JSON.parse(testCasesInput);
-      } catch (e) {
-        showToast("Invalid JSON format for test cases.", "error");
-        return;
-      }
-    } else {
-      testCases = generatedTests;
-    }
-
-    if (testCases.length === 0) {
-      showToast(
-        "No test cases to run. Please generate or input test cases first.",
-        "warning"
-      );
-      return;
-    }
-
-    // Show loading state
-    runBtn.innerHTML =
-      '<i class="fas fa-spinner fa-spin"></i> Running Tests...';
-    runBtn.disabled = true;
-    showLoading("Running test cases...");
-
-    // Make API call
-    const response = await fetch("/api/run-test", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        website_url: websiteUrl,
-        test_cases: testCases,
-        live_testing: liveTestingEnabled,
-      }),
-    });
-
-    const result = await response.json();
-
-    if (result.status === "success") {
-      const testResults = result.results || generateMockResults(testCases);
-      displayTestResults(testResults);
-      showToast(result.message, "success");
-    } else {
-      throw new Error(result.message);
-    }
-  } catch (error) {
-    console.error("Error running tests:", error);
-    showToast("Failed to run test cases. Please try again.", "error");
-  } finally {
-    // Reset button state
-    runBtn.innerHTML = originalText;
-    runBtn.disabled = false;
-    hideLoading();
-  }
-}
-
-// Generate mock test results for demonstration
-function generateMockResults(testCases) {
-  return testCases.map((test, index) => ({
-    id: test.id || index + 1,
-    name: test.name,
-    status: Math.random() > 0.3 ? "passed" : "failed",
-    duration: Math.floor(Math.random() * 5000) + 500, // 500-5500ms
-    message:
-      Math.random() > 0.3
-        ? "Test completed successfully"
-        : "Element not found or assertion failed",
-  }));
-}
-
-// Display test results
-function displayTestResults(results) {
-  const resultsSection = document.getElementById("run-results");
-  const testResultsList = document.getElementById("test-results-list");
-  const passedCount = document.getElementById("passed-count");
-  const failedCount = document.getElementById("failed-count");
-
-  const passed = results.filter((r) => r.status === "passed").length;
-  const failed = results.filter((r) => r.status === "failed").length;
-
-  passedCount.textContent = passed;
-  failedCount.textContent = failed;
-
-  testResultsList.innerHTML = results
-    .map(
-      (result) => `
-        <div class="test-result ${result.status}">
-            <h5>
-                <i class="fas ${
-                  result.status === "passed"
-                    ? "fa-check-circle"
-                    : "fa-times-circle"
-                }"></i>
-                ${result.name}
-            </h5>
-            <p><strong>Status:</strong> ${result.status.toUpperCase()}</p>
-            <p><strong>Duration:</strong> ${result.duration}ms</p>
-            <p><strong>Message:</strong> ${result.message}</p>
+    let accordionHTML = `
+        <div class="accordion-header">
+            <h3>Generated Test Cases</h3>
+            <button class="btn btn-secondary" onclick="addAllTestCases()">Add All</button>
         </div>
-    `
-    )
-    .join("");
+    `;
 
-  resultsSection.style.display = "block";
-  resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    generatedTests.forEach(test => {
+        accordionHTML += `
+            <div class="accordion-item">
+                <button class="accordion-button">
+                    <span>${test.id}: ${test.name}</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <p><strong>Description:</strong> ${test.description}</p>
+                    <p><strong>Type:</strong> ${test.type}</p>
+                    <p><strong>Selector:</strong> <code>${test.selector || 'N/A'}</code></p>
+                    <div class="toggle-label" style="margin-top: 15px;">
+                        <input type="checkbox" id="test-case-${test.id}" class="toggle-input" data-testid="${test.id}">
+                        <span class="toggle-slider"></span>
+                        <span>Add to Test</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = accordionHTML;
+    container.style.display = 'block';
+
+    // Add event listeners for accordion functionality
+    document.querySelectorAll('.accordion-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const content = button.nextElementSibling;
+            button.classList.toggle('active');
+            content.classList.toggle('active');
+        });
+    });
+
+    // --- FIXED EVENT LISTENERS ---
+    // Add event listeners for the new toggle buttons
+    document.querySelectorAll('.accordion-content .toggle-input').forEach(toggle => {
+        toggle.addEventListener('change', (event) => {
+            const testId = parseInt(event.target.dataset.testid, 10);
+            toggleTestCaseSelection(testId);
+        });
+    });
 }
 
-// Switch to run tab with generated tests
-function switchToRunTab() {
-  // Switch to run tab
-  document.querySelector('.tab-btn[data-tab="run"]').click();
+function toggleTestCaseSelection(testId) {
+    const test = generatedTests.find(t => t.id === testId);
+    if (!test) return;
 
-  // Pre-fill test cases if available
-  if (generatedTests.length > 0) {
-    document.getElementById("test-cases-input").value = JSON.stringify(
-      generatedTests,
-      null,
-      2
-    );
-  }
-
-  // Scroll to the run section
-  setTimeout(() => {
-    document
-      .getElementById("run")
-      .scrollIntoView({ behavior: "smooth", block: "start" });
-  }, 100);
+    const index = selectedTestCases.findIndex(t => t.id === testId);
+    if (index > -1) {
+        // Remove from selection
+        selectedTestCases.splice(index, 1);
+    } else {
+        // Add to selection
+        selectedTestCases.push(test);
+    }
 }
 
-// Download test cases
-function downloadTests() {
+function addAllTestCases() {
+    selectedTestCases = [...generatedTests];
+    // Check all toggle boxes
+    document.querySelectorAll('.accordion-content .toggle-input').forEach(toggle => {
+        toggle.checked = true;
+    });
+    showToast(`Added all ${generatedTests.length} test cases to the test suite.`, "success");
+}
+
+function displaySelectedTestCases() {
+    const displayArea = document.getElementById('selected-tests-display-area');
+    if (!displayArea) return;
+
+    if (selectedTestCases.length === 0) {
+        displayArea.innerHTML = '<h4>No test cases selected for execution.</h4>';
+        return;
+    }
+
+    let listHTML = '<h4>Selected Test Cases for Execution:</h4><ul id="selected-tests-list">';
+    selectedTestCases.forEach(test => {
+        listHTML += `<li>${test.id}: ${test.name}</li>`;
+    });
+    listHTML += '</ul>';
+
+    displayArea.innerHTML = listHTML;
+}
+
+
+// Display test results and add a download button
+function displayTestResults(results) {
+    const resultsSection = document.getElementById("results-section");
+    const resultsHeader = resultsSection.querySelector('.results-header');
+    const testResultsList = document.getElementById("test-results-list");
+    const passedCount = document.getElementById("passed-count");
+    const failedCount = document.getElementById("failed-count");
+
+    const passed = results.filter((r) => r.status === "passed").length;
+    const failed = results.filter((r) => r.status === "failed").length;
+
+    passedCount.textContent = passed;
+    failedCount.textContent = failed;
+
+    // Add a download button to the header
+    if (resultsHeader) {
+        let actionsContainer = resultsHeader.querySelector('.results-actions');
+        if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'results-actions';
+            resultsHeader.appendChild(actionsContainer);
+        }
+        
+        // Ensure button is not duplicated
+        if (!actionsContainer.querySelector('.btn-download')) {
+            const downloadBtn = document.createElement('button');
+            downloadBtn.className = 'btn btn-secondary btn-download';
+            downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download as DOCX';
+            downloadBtn.onclick = downloadTests; // This calls the updated download function
+            actionsContainer.appendChild(downloadBtn);
+        }
+    }
+
+    if (results.length === 0) {
+        testResultsList.innerHTML = `<p class="text-center" style="padding: 20px; color: var(--gray-500);">No test results to display. The test run may have completed without returning specific results.</p>`;
+    } else {
+        testResultsList.innerHTML = results
+            .map(
+                (result) => `
+        <div class="test-result ${result.status}">
+          <h5>
+            <i class="fas ${
+              result.status === "passed" ? "fa-check-circle" : "fa-times-circle"
+            }"></i>
+            ${result.name}
+          </h5>
+          <p><strong>Status:</strong> ${result.status.toUpperCase()}</p>
+          <p><strong>Duration:</strong> ${result.duration}ms</p>
+          <p><strong>Message:</strong> ${result.message}</p>
+        </div>
+      `
+            )
+            .join("");
+    }
+
+
+    resultsSection.style.display = "block";
+    resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// Download test cases as a DOCX file by calling the backend
+async function downloadTests() {
   if (generatedTests.length === 0) {
-    showToast("No test cases to download.", "warning");
+    showToast("No generated test cases to download.", "warning");
     return;
   }
 
-  const dataStr = JSON.stringify(generatedTests, null, 2);
-  const dataBlob = new Blob([dataStr], { type: "application/json" });
-  const url = URL.createObjectURL(dataBlob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "casey-ai-test-cases.json";
-  link.click();
-  URL.revokeObjectURL(url);
+  showLoading("Generating DOCX file...");
 
-  showToast("Test cases downloaded successfully!", "success");
+  try {
+    const response = await fetch("/api/download-tests", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ test_cases: generatedTests }),
+    });
+
+    if (!response.ok) {
+      const errorResult = await response.json().catch(() => ({ message: "Failed to download file. Server returned an error." }));
+      throw new Error(errorResult.message);
+    }
+
+    // Handle the file blob response
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = "generated_test_cases.docx"; // Set the correct filename
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+
+    showToast("DOCX file downloaded successfully!", "success");
+
+  } catch (error) {
+    console.error("Error downloading test cases:", error);
+    showToast(error.message || "An error occurred while downloading.", "error");
+  } finally {
+    hideLoading();
+  }
 }
 
 // Utility Functions
@@ -931,158 +767,4 @@ function showToast(message, type = "info") {
       toast.parentNode.removeChild(toast);
     }
   });
-}
-
-// Generate mock test cases for demonstration
-function generateMockTests(testType) {
-  const mockTests = {
-    figma: [
-      {
-        id: 1,
-        name: "Button Click Test",
-        description:
-          "Verify that the primary button is clickable and triggers the expected action",
-        type: "UI Interaction",
-        selector: ".btn-primary",
-      },
-      {
-        id: 2,
-        name: "Form Validation Test",
-        description:
-          "Check that form validation works correctly for required fields",
-        type: "Form Validation",
-        selector: "form input[required]",
-      },
-      {
-        id: 3,
-        name: "Responsive Design Test",
-        description:
-          "Ensure the design is responsive across different screen sizes",
-        type: "Responsive",
-        selector: ".responsive-container",
-      },
-    ],
-    document: [
-      {
-        id: 1,
-        name: "User Registration Flow",
-        description:
-          "Test the complete user registration process as described in requirements",
-        type: "User Flow",
-        selector: ".registration-form",
-      },
-      {
-        id: 2,
-        name: "Data Validation Test",
-        description:
-          "Verify that data validation rules match the documented specifications",
-        type: "Data Validation",
-        selector: "input[data-validation]",
-      },
-      {
-        id: 3,
-        name: "API Integration Test",
-        description: "Test API endpoints as documented in the specification",
-        type: "API Testing",
-        selector: ".api-endpoint",
-      },
-    ],
-    manual: [
-      {
-        id: 1,
-        name: "Custom User Flow Test",
-        description: "Test the user flow as described in manual requirements",
-        type: "User Flow",
-        selector: ".main-content",
-      },
-      {
-        id: 2,
-        name: "Feature Functionality Test",
-        description: "Verify that custom features work as specified",
-        type: "Functionality",
-        selector: ".feature-container",
-      },
-      {
-        id: 3,
-        name: "Integration Test",
-        description: "Test integration points as described in requirements",
-        type: "Integration",
-        selector: ".integration-point",
-      },
-    ],
-    website: [
-      {
-        id: 1,
-        name: "Navigation Test",
-        description: "Verify that all navigation links work correctly",
-        type: "Navigation",
-        selector: "nav a",
-      },
-      {
-        id: 2,
-        name: "Page Load Test",
-        description: "Check that all pages load within acceptable time limits",
-        type: "Performance",
-        selector: "body",
-      },
-      {
-        id: 3,
-        name: "Contact Form Test",
-        description: "Test contact form submission and validation",
-        type: "Form Testing",
-        selector: ".contact-form",
-      },
-    ],
-  };
-
-  return mockTests[testType] || [];
-}
-
-// Generate mock test results for demonstration
-function generateMockResults(testCases) {
-  return testCases.map((test, index) => ({
-    id: test.id || index + 1,
-    name: test.name,
-    status: Math.random() > 0.3 ? "passed" : "failed",
-    duration: Math.floor(Math.random() * 5000) + 500, // 500-5500ms
-    message:
-      Math.random() > 0.3
-        ? "Test completed successfully"
-        : "Element not found or assertion failed",
-  }));
-}
-
-// Display test results
-function displayTestResults(results) {
-  const resultsSection = document.getElementById("results-section");
-  const testResultsList = document.getElementById("test-results-list");
-  const passedCount = document.getElementById("passed-count");
-  const failedCount = document.getElementById("failed-count");
-
-  const passed = results.filter((r) => r.status === "passed").length;
-  const failed = results.filter((r) => r.status === "failed").length;
-
-  passedCount.textContent = passed;
-  failedCount.textContent = failed;
-
-  testResultsList.innerHTML = results
-    .map(
-      (result) => `
-    <div class="test-result ${result.status}">
-      <h5>
-        <i class="fas ${
-          result.status === "passed" ? "fa-check-circle" : "fa-times-circle"
-        }"></i>
-        ${result.name}
-      </h5>
-      <p><strong>Status:</strong> ${result.status.toUpperCase()}</p>
-      <p><strong>Duration:</strong> ${result.duration}ms</p>
-      <p><strong>Message:</strong> ${result.message}</p>
-    </div>
-  `
-    )
-    .join("");
-
-  resultsSection.style.display = "block";
-  resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
