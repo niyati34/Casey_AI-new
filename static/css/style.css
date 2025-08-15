@@ -572,6 +572,32 @@ body {
   z-index: 2;
 }
 
+/* NEW: Pipeline Choice Container */
+.pipeline-choice-container {
+    text-align: center;
+    padding: 60px 20px;
+    background: rgba(15, 17, 22, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    backdrop-filter: blur(15px);
+    max-width: 700px;
+    margin: 40px auto;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.pipeline-choice-container h3 {
+    font-size: var(--font-size-2xl);
+    margin-bottom: 30px;
+}
+
+.choice-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+
 /* World-Class Pipeline Container - SMALLER ROUND CIRCLE */
 .pipeline-container {
   width: 85vw; /* Smaller circle */
@@ -1735,14 +1761,71 @@ body {
     display: none;
   }
 
+  .step-card {
+    border-radius: 24px;
+    margin-bottom: 30px;
+  }
+
+  .step-header {
+    padding: 40px 30px 30px;
+  }
+
+  .step-header h3 {
+    font-size: 24px;
+    flex-direction: column;
+    gap: 12px;
+  }
+
   .input-options {
     grid-template-columns: 1fr;
     padding: 30px 20px;
-    gap: 16px;
+    gap: 20px;
   }
 
-  .step-card {
-    border-radius: 20px;
+  .input-option {
+    padding: 24px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    padding: 12px 0;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .logo i {
+    font-size: 24px;
+  }
+
+  .nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .pipeline-section {
+    padding: 80px 0 30px;
+  }
+
+  .section-title {
+    font-size: clamp(24px, 8vw, 36px);
+  }
+
+  .section-subtitle {
+    font-size: 14px;
+  }
+
+  .progress-step {
+    min-width: 260px;
+    padding: 16px 20px;
+  }
+
+  .step-icon {
+    width: 44px;
+    height: 44px;
   }
 
   .step-header {
@@ -1750,21 +1833,15 @@ body {
   }
 
   .step-header h3 {
-    font-size: 24px;
+    font-size: 20px;
   }
 
-  .execution-summary {
-    grid-template-columns: 1fr;
+  .input-options {
+    padding: 20px 15px;
   }
 
-  .step-actions {
-    flex-direction: column;
-    padding: 25px 20px 30px;
-  }
-
-  .step-actions .btn {
-    width: 100%;
-    min-width: auto;
+  .input-option {
+    padding: 20px 16px;
   }
 }
 
@@ -2352,64 +2429,6 @@ body {
 
   .input-option {
     padding: 24px 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-content {
-    padding: 12px 0;
-  }
-
-  .logo {
-    font-size: 20px;
-  }
-
-  .logo i {
-    font-size: 24px;
-  }
-
-  .nav {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-  }
-
-  .pipeline-section {
-    padding: 80px 0 30px;
-  }
-
-  .section-title {
-    font-size: clamp(24px, 8vw, 36px);
-  }
-
-  .section-subtitle {
-    font-size: 14px;
-  }
-
-  .progress-step {
-    min-width: 260px;
-    padding: 16px 20px;
-  }
-
-  .step-icon {
-    width: 44px;
-    height: 44px;
-  }
-
-  .step-header {
-    padding: 30px 20px 25px;
-  }
-
-  .step-header h3 {
-    font-size: 20px;
-  }
-
-  .input-options {
-    padding: 20px 15px;
-  }
-
-  .input-option {
-    padding: 20px 16px;
   }
 }
 

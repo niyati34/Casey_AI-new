@@ -5,6 +5,7 @@ let selectedTestCases = []; // To store test cases selected for live testing
 let currentStep = 1;
 let sourceWebsiteUrl = "";
 let selectedInputType = "";
+let isDirectTestingMode = false; // NEW: To track the user's chosen flow
 
 // DOM Elements
 const loadingOverlay = document.getElementById("loading-overlay");
@@ -14,9 +15,7 @@ const toastContainer = document.getElementById("toast-container");
 // Initialize the application
 document.addEventListener("DOMContentLoaded", function () {
   initializeEventListeners();
-  initializeFileUpload();
-  initializePipeline();
-  initializeWebsiteOptions();
+  initializePipelineChoice(); // NEW: Initialize the new choice buttons
 });
 
 // Event Listeners
@@ -46,6 +45,48 @@ function initializeEventListeners() {
     }
   });
 }
+
+// NEW: Handle the initial choice between generating tests and direct testing
+function initializePipelineChoice() {
+    const generateBtn = document.getElementById("generate-new-btn");
+    const liveTestBtn = document.getElementById("live-testing-btn");
+    const choiceContainer = document.getElementById("pipeline-choice");
+    const progressContainer = document.getElementById("pipeline-progress-container");
+    const mainContainer = document.getElementById("pipeline-main-container");
+
+    generateBtn.addEventListener("click", () => {
+        isDirectTestingMode = false;
+        choiceContainer.style.display = "none";
+        progressContainer.style.display = "flex";
+        mainContainer.style.display = "block";
+        initializeGenerationFlow();
+    });
+
+    liveTestBtn.addEventListener("click", () => {
+        isDirectTestingMode = true;
+        choiceContainer.style.display = "none";
+        // Hide progress bar for direct testing flow as it's not relevant
+        progressContainer.style.display = "none"; 
+        mainContainer.style.display = "block";
+        initializeDirectTestingFlow();
+    });
+}
+
+// NEW: Setup for the test generation flow
+function initializeGenerationFlow() {
+    initializeFileUpload();
+    initializePipeline();
+    initializeWebsiteOptions();
+    goToStep(1); // Start at step 1
+}
+
+// NEW: Setup for the direct live testing flow
+function initializeDirectTestingFlow() {
+    initializeDirectUpload();
+    // Directly go to step 3, configured for direct testing
+    goToStep(3); 
+}
+
 
 // Pipeline functionality
 function initializePipeline() {
@@ -133,9 +174,24 @@ function goToStep(stepNumber) {
     }
   });
   
-  // If moving to step 3, display the selected test cases
+  // --- MODIFIED: Conditional UI for Step 3 ---
   if (stepNumber === 3) {
-      displaySelectedTestCases();
+      const directUpload = document.getElementById("direct-testing-upload");
+      const generationOptions = document.getElementById("generation-flow-options");
+      const backBtn = document.getElementById("step3-back-btn");
+
+      if (isDirectTestingMode) {
+          directUpload.style.display = "block";
+          generationOptions.style.display = "none"; // Hide options related to generation flow
+          backBtn.style.display = "none"; // Cannot go back
+          // In direct mode, the target URL must be specified.
+          document.getElementById('target-url-form').style.display = 'block';
+      } else {
+          directUpload.style.display = "none";
+          generationOptions.style.display = "block";
+          backBtn.style.display = "inline-flex";
+          displaySelectedTestCases();
+      }
   }
 }
 
@@ -226,6 +282,7 @@ async function generateTestCases() {
   const generateBtn = document.getElementById("generate-btn");
   const downloadBtn = document.getElementById("download-btn");
   const nextStepBtn = document.getElementById("next-step-btn");
+  const exitBtn = document.getElementById("exit-btn");
   
   const progressFill = document.querySelector(".progress-fill");
   const statusContent = document.querySelector(".status-content p");
@@ -280,10 +337,11 @@ async function generateTestCases() {
         "success"
       );
 
-      // Hide the generate button and show the download/next step buttons
+      // Hide the generate button and show the other action buttons
       generateBtn.style.display = 'none';
       downloadBtn.style.display = 'inline-flex';
       nextStepBtn.style.display = 'inline-flex';
+      exitBtn.style.display = 'inline-flex';
       
       // Display the accordion
       displayTestCasesAccordion();
@@ -333,37 +391,49 @@ function getInputData() {
 }
 
 function proceedToExecution() {
-  // --- NEW VALIDATION ---
-  // Prevent moving to step 4 without selecting any test cases
+  // --- MODIFIED VALIDATION ---
   if (selectedTestCases.length === 0) {
-      showToast("Please go back and add at least one test case to execute.", "warning");
+      const message = isDirectTestingMode 
+          ? "Please upload a file with test cases before proceeding."
+          : "Please go back and add at least one test case to execute.";
+      showToast(message, "warning");
       return;
   }
 
-  // Validate website selection
-  const useSourceUrl = document.getElementById("use-source-url").checked;
-  const useDifferentUrl = document.getElementById("use-different-url").checked;
-
   let targetUrl = "";
+  if (isDirectTestingMode) {
+      targetUrl = document.getElementById("target-website-url").value.trim();
+      if (!targetUrl) {
+          showToast("Please enter a target website URL.", "warning");
+          return;
+      }
+      if (!isValidUrl(targetUrl)) {
+          showToast("Please enter a valid URL.", "warning");
+          return;
+      }
+  } else {
+      const useSourceUrl = document.getElementById("use-source-url").checked;
+      const useDifferentUrl = document.getElementById("use-different-url").checked;
 
-  if (useSourceUrl && sourceWebsiteUrl) {
-    targetUrl = sourceWebsiteUrl;
-  } else if (useDifferentUrl) {
-    targetUrl = document.getElementById("target-website-url").value.trim();
-    if (!targetUrl) {
-      showToast("Please enter a target website URL.", "warning");
-      return;
-    }
-    if (!isValidUrl(targetUrl)) {
-      showToast("Please enter a valid URL.", "warning");
-      return;
-    }
-  } else if (useSourceUrl && !sourceWebsiteUrl) {
-    showToast(
-      "No source URL available. Please select a different website.",
-      "warning"
-    );
-    return;
+      if (useSourceUrl && sourceWebsiteUrl) {
+        targetUrl = sourceWebsiteUrl;
+      } else if (useDifferentUrl) {
+        targetUrl = document.getElementById("target-website-url").value.trim();
+        if (!targetUrl) {
+          showToast("Please enter a target website URL.", "warning");
+          return;
+        }
+        if (!isValidUrl(targetUrl)) {
+          showToast("Please enter a valid URL.", "warning");
+          return;
+        }
+      } else if (useSourceUrl && !sourceWebsiteUrl) {
+        showToast(
+          "No source URL available. Please select a different website.",
+          "warning"
+        );
+        return;
+      }
   }
 
   // Update execution summary
@@ -391,9 +461,10 @@ async function executeTests() {
   try {
     // Get target URL
     const useSourceUrl = document.getElementById("use-source-url").checked;
-    const targetUrl = useSourceUrl
-      ? sourceWebsiteUrl
-      : document.getElementById("target-website-url").value.trim();
+    const targetUrl = isDirectTestingMode 
+        ? document.getElementById("target-website-url").value.trim()
+        : (useSourceUrl ? sourceWebsiteUrl : document.getElementById("target-website-url").value.trim());
+
     const liveTestingEnabled = document.getElementById(
       "live-testing-toggle"
     ).checked;
@@ -441,59 +512,117 @@ async function executeTests() {
 function initializeFileUpload() {
   const fileUploadArea = document.getElementById("file-upload-area");
   const fileInput = document.getElementById("document-upload");
-
-  // Click to upload
-  fileUploadArea.addEventListener("click", () => fileInput.click());
-
-  // Drag and drop
-  fileUploadArea.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    e.currentTarget.classList.add("dragover");
-  });
-
-  fileUploadArea.addEventListener("dragleave", (e) => {
-    e.preventDefault();
-    e.currentTarget.classList.remove("dragover");
-  });
-
-  fileUploadArea.addEventListener("drop", (e) => {
-    e.preventDefault();
-    e.currentTarget.classList.remove("dragover");
-    const files = e.dataTransfer.files;
-    if (files.length > 0) handleFileSelect(files[0]);
-  });
-
-  // File input change
-  fileInput.addEventListener("change", (e) => {
-    if (e.target.files.length > 0) handleFileSelect(e.target.files[0]);
-  });
+  setupDragAndDrop(fileUploadArea, fileInput, handleFileSelect);
 }
 
-// Handle file selection
+// NEW: Initialize the upload area for the direct testing flow
+function initializeDirectUpload() {
+    const fileUploadArea = document.getElementById("direct-test-case-upload-area");
+    const fileInput = document.getElementById("direct-test-case-upload");
+    setupDragAndDrop(fileUploadArea, fileInput, handleDirectFileSelect);
+}
+
+// NEW: Reusable drag and drop setup
+function setupDragAndDrop(area, input, fileHandler) {
+    area.addEventListener("click", () => input.click());
+
+    area.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        e.currentTarget.classList.add("dragover");
+    });
+
+    area.addEventListener("dragleave", (e) => {
+        e.preventDefault();
+        e.currentTarget.classList.remove("dragover");
+    });
+
+    area.addEventListener("drop", (e) => {
+        e.preventDefault();
+        e.currentTarget.classList.remove("dragover");
+        const files = e.dataTransfer.files;
+        if (files.length > 0) fileHandler(files[0]);
+    });
+
+    input.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) fileHandler(e.target.files[0]);
+    });
+}
+
+
+// Handle file selection for generation flow
 function handleFileSelect(file) {
-  const allowedTypes = [".pdf", ".doc", ".docx"];
-  const fileExtension = "." + file.name.split(".").pop().toLowerCase();
-
-  if (!allowedTypes.includes(fileExtension)) {
-    showToast("Please select a PDF, DOC, or DOCX file.", "error");
-    return;
-  }
-
-  if (file.size > 16 * 1024 * 1024) { // 16MB
-    showToast("File size must be less than 16MB.", "error");
-    return;
-  }
-
-  // Update UI to show selected file
   const uploadContent = document.querySelector("#file-upload-area .upload-content");
-  uploadContent.innerHTML = `
+  if (validateFile(file)) {
+    updateUploadUI(uploadContent, file.name);
+    showToast("File selected successfully!", "success");
+  }
+}
+
+// NEW: Handle file selection for direct testing flow
+async function handleDirectFileSelect(file) {
+    const uploadContent = document.querySelector("#direct-test-case-upload-area .upload-content");
+    if (validateFile(file)) {
+        updateUploadUI(uploadContent, file.name);
+        await parseAndLoadTests(file);
+    }
+}
+
+// NEW: Reusable file validation
+function validateFile(file) {
+    const allowedTypes = [".pdf", ".doc", ".docx"];
+    const fileExtension = "." + file.name.split(".").pop().toLowerCase();
+
+    if (!allowedTypes.includes(fileExtension)) {
+        showToast("Please select a PDF, DOC, or DOCX file.", "error");
+        return false;
+    }
+
+    if (file.size > 16 * 1024 * 1024) { // 16MB
+        showToast("File size must be less than 16MB.", "error");
+        return false;
+    }
+    return true;
+}
+
+// NEW: Reusable UI update for file upload
+function updateUploadUI(contentElement, fileName) {
+    contentElement.innerHTML = `
         <i class="fas fa-file-check" style="color: #10b981;"></i>
-        <p><strong>${file.name}</strong></p>
+        <p><strong>${fileName}</strong></p>
         <small>Click again or drag to replace</small>
     `;
-
-  showToast("File selected successfully!", "success");
 }
+
+// NEW: Function to parse uploaded test cases
+async function parseAndLoadTests(file) {
+    showLoading("Parsing your test case file...");
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const response = await fetch("/api/parse-tests-from-file", {
+            method: "POST",
+            body: formData,
+        });
+
+        const result = await response.json();
+        if (result.status === "success" && result.tests) {
+            selectedTestCases = result.tests;
+            displaySelectedTestCases(); // Display the parsed tests
+            showToast(`Successfully parsed ${result.tests.length} test cases.`, "success");
+        } else {
+            throw new Error(result.message || "Failed to parse test cases from file.");
+        }
+    } catch (error) {
+        console.error("Error parsing file:", error);
+        showToast(error.message, "error");
+        selectedTestCases = []; // Clear any partial data
+        displaySelectedTestCases(); // Update UI to show no tests
+    } finally {
+        hideLoading();
+    }
+}
+
 
 // Smooth scrolling function
 function scrollToSection(sectionId) {

@@ -47,8 +47,21 @@
           </p>
         </div>
 
-        <!-- Pipeline Progress -->
-        <div class="pipeline-progress">
+        <!-- NEW: Initial Choice -->
+        <div id="pipeline-choice" class="pipeline-choice-container">
+            <h3>How would you like to start?</h3>
+            <div class="choice-buttons">
+                <button id="generate-new-btn" class="btn btn-primary">
+                    <i class="fas fa-magic"></i> Generate New Test Cases
+                </button>
+                <button id="live-testing-btn" class="btn btn-secondary">
+                    <i class="fas fa-vial"></i> Use Existing Test Cases
+                </button>
+            </div>
+        </div>
+        
+        <!-- Pipeline Progress (Initially Hidden) -->
+        <div id="pipeline-progress-container" class="pipeline-progress" style="display: none;">
           <div class="progress-step active" data-step="1">
             <div class="step-icon">
               <i class="fas fa-upload"></i>
@@ -91,8 +104,8 @@
         </div>
       </div>
 
-      <!-- Pipeline Steps Outside Container -->
-      <div class="pipeline-container">
+      <!-- Pipeline Steps Outside Container (Initially Hidden) -->
+      <div id="pipeline-main-container" class="pipeline-container" style="display: none;">
           <!-- Step 1: Input Source Selection -->
           <div id="step-1" class="pipeline-step active">
             <div class="step-card">
@@ -282,6 +295,10 @@
                     <i class="fas fa-download"></i>
                     Download Test Cases
                 </button>
+                <button class="btn btn-secondary" id="exit-btn" style="display: none;" onclick="window.location.href='/'">
+                    <i class="fas fa-times-circle"></i>
+                    Exit
+                </button>
                 <button class="btn btn-primary" onclick="goToStep(3)" id="next-step-btn" style="display: none;">
                   <i class="fas fa-arrow-right"></i>
                   Move Forward
@@ -298,72 +315,89 @@
                 <p>Specify where you want to run the generated test cases</p>
               </div>
 
-              <!-- Container for selected tests -->
+              <!-- NEW: Upload area for direct testing flow -->
+              <div id="direct-testing-upload" style="display: none;">
+                  <div class="form-group">
+                      <label>Upload Your Test Case Document</label>
+                      <div class="file-upload-area" id="direct-test-case-upload-area">
+                          <input type="file" id="direct-test-case-upload" accept=".pdf,.doc,.docx" class="file-input" />
+                          <div class="upload-content">
+                              <i class="fas fa-cloud-upload-alt"></i>
+                              <p>Drag & drop or <span class="upload-link">browse</span> for your test file</p>
+                              <small>Supports PDF, DOC, DOCX</small>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- Container for selected/parsed tests -->
               <div id="selected-tests-display-area">
                   <!-- Selected tests will be displayed here by script.js -->
               </div>
 
-              <div class="website-options">
-                <div class="website-option">
-                  <input
-                    type="radio"
-                    id="use-source-url"
-                    name="website-source"
-                    value="source"
-                    checked
-                  />
-                  <label for="use-source-url" class="option-label">
-                    <div class="option-icon">
-                      <i class="fas fa-link"></i>
-                    </div>
-                    <div class="option-content">
-                      <h4>Use Source Website</h4>
-                      <p>Use the same website from test generation</p>
-                      <div class="source-url-display" id="source-url-display">
-                        <i class="fas fa-globe"></i>
-                        <span id="display-source-url"
-                          >No source URL available</span
-                        >
+              <div id="generation-flow-options">
+                <div class="website-options">
+                  <div class="website-option">
+                    <input
+                      type="radio"
+                      id="use-source-url"
+                      name="website-source"
+                      value="source"
+                      checked
+                    />
+                    <label for="use-source-url" class="option-label">
+                      <div class="option-icon">
+                        <i class="fas fa-link"></i>
                       </div>
-                    </div>
-                  </label>
+                      <div class="option-content">
+                        <h4>Use Source Website</h4>
+                        <p>Use the same website from test generation</p>
+                        <div class="source-url-display" id="source-url-display">
+                          <i class="fas fa-globe"></i>
+                          <span id="display-source-url"
+                            >No source URL available</span
+                          >
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+
+                  <div class="website-option">
+                    <input
+                      type="radio"
+                      id="use-different-url"
+                      name="website-source"
+                      value="different"
+                    />
+                    <label for="use-different-url" class="option-label">
+                      <div class="option-icon">
+                        <i class="fas fa-external-link-alt"></i>
+                      </div>
+                      <div class="option-content">
+                        <h4>Different Website</h4>
+                        <p>Specify a different website URL</p>
+                      </div>
+                    </label>
+                  </div>
                 </div>
 
-                <div class="website-option">
-                  <input
-                    type="radio"
-                    id="use-different-url"
-                    name="website-source"
-                    value="different"
-                  />
-                  <label for="use-different-url" class="option-label">
-                    <div class="option-icon">
-                      <i class="fas fa-external-link-alt"></i>
-                    </div>
-                    <div class="option-content">
-                      <h4>Different Website</h4>
-                      <p>Specify a different website URL</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <div
-                class="target-url-form"
-                id="target-url-form"
-                style="display: none"
-              >
-                <div class="form-group">
-                  <label for="target-website-url">Target Website URL</label>
-                  <input
-                    type="url"
-                    id="target-website-url"
-                    placeholder="https://example.com"
-                    class="form-input"
-                  />
-                  <small class="form-hint"
-                    >URL where test cases will be executed</small
-                  >
+                <div
+                  class="target-url-form"
+                  id="target-url-form"
+                  style="display: none"
+                >
+                  <div class="form-group">
+                    <label for="target-website-url">Target Website URL</label>
+                    <input
+                      type="url"
+                      id="target-website-url"
+                      placeholder="https://example.com"
+                      class="form-input"
+                    />
+                    <small class="form-hint"
+                      >URL where test cases will be executed</small
+                    >
+                  </div>
                 </div>
               </div>
 
@@ -387,7 +421,7 @@
               </div>
 
               <div class="step-actions">
-                <button class="btn btn-secondary" onclick="goBackToStep(2)">
+                <button class="btn btn-secondary" id="step3-back-btn" onclick="goBackToStep(2)">
                   <i class="fas fa-arrow-left"></i>
                   Back
                 </button>
