@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, send_file
 import os
 import json
+from docx import Document  # <-- This line was missing
 
 # Import the new test case generation function
 from test_case_generation import generate_test_cases
@@ -15,7 +16,7 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB max file size
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
 @app.route('/')
 def index():
@@ -51,7 +52,6 @@ def handle_generate_test():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
-# --- REFACTORED ENDPOINT USING THE NEW PARSER ---
 @app.route('/api/parse-tests-from-file', methods=['POST'])
 def parse_tests_from_file_endpoint():
     """
@@ -69,7 +69,7 @@ def parse_tests_from_file_endpoint():
         file_size = file.tell()
         file.seek(0)
         if file_size > app.config['MAX_CONTENT_LENGTH']:
-            return jsonify({'status': 'error', 'message': 'File exceeds the 2MB size limit.'}), 413
+            return jsonify({'status': 'error', 'message': f"File exceeds the {app.config['MAX_CONTENT_LENGTH'] / 1024 / 1024}MB size limit."}), 413
 
         file_content = read_file_content(file)
         if not file_content.strip():
@@ -86,8 +86,6 @@ def parse_tests_from_file_endpoint():
             'tests': all_tests
         })
 
-    except ConnectionError as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
     except Exception as e:
         return jsonify({'status': 'error', 'message': f"An unexpected server error occurred: {str(e)}"}), 500
 

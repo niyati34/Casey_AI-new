@@ -1,68 +1,83 @@
-from llm_utils import get_llm, invoke_llm_for_json
+import re
+import json
+from llm_utils import get_llm, invoke_llm
 
 def _create_prompt_template(test_type):
     """
     Selects and returns the appropriate prompt template based on the test type.
+    This prompt is now more explicit, asking for a JSON array to ensure a structured response,
+    and properly escapes the example curly braces.
     """
-    # --- UPDATED PROMPT ---
-    # This prompt now ensures detailed test case generation in the specified format.
     common_instructions = (
-        "You are an AI assistant tasked with generating detailed test cases. "
-        "For each test case, provide the following fields: "
-        "ID, Title, Description, Expected Outcome, Type, and Selector. "
-        "Ensure the output is formatted as follows: \n"
-        "ID: <number> - <Title>\n"
-        "Description: <description>\n"
-        "Expected outcome: <expected outcome>\n"
-        "Type: <type>\n"
-        "Selector: <selector>\n"
-        "\n"
-        "Generate at most 10 test cases based on the input provided."
+        "You are an expert QA engineer. Your task is to generate a JSON array of test case objects based on the provided input. "
+        "Each object in the array must have the following keys: 'id', 'name', 'description', 'type', and 'selector'. "
+        "Do not include any introductory text, notes, or any text outside of the JSON array. "
+        "The response MUST start with '[' and end with ']'.\n"
+        "Generate exactly 5 test cases.\n"
+        "Example format:\n"
+        """
+[
+  {{
+    "id": 1,
+    "name": "Example Test Case",
+    "description": "This is an example description.",
+    "type": "Functional",
+    "selector": "#example-id"
+  }}
+]
+        """
     )
 
-    if test_type == 'figma':
-        return (
-            f"{common_instructions} "
-            "Input Type: Figma Design. "
-            "Figma File Key: {{figma_key}}. "
-            "Task: Analyze the design and generate the test cases."
-        )
+    prompt_map = {
+        'figma': f"{common_instructions}\nInput Type: Figma Design\nFigma File Key: {{figma_key}}",
+        'document': f"{common_instructions}\nInput Type: SRS Document\nFile Name: {{file_name}}\nDocument Content: ```{{file_content}}```",
+        'manual': f"{common_instructions}\nInput Type: Manual Prompt\nUser Requirements: \"{{manual_prompt}}\"",
+        'website': f"{common_instructions}\nInput Type: Website URL\nWebsite URL: {{website_url}}"
+    }
+    return prompt_map.get(test_type)
 
-    elif test_type == 'document':
-        return (
-            f"{common_instructions} "
-            "Input Type: Software Requirements Specification (SRS) Document. "
-            "File Name: {{file_name}}. "
-            "Document Content: {{file_content}}. "
-            "Task: Read the requirements and generate the test cases."
-        )
-
-    elif test_type == 'manual':
-        return (
-            f"{common_instructions} "
-            "Input Type: Manual Prompt. "
-            "User Requirements: {{manual_prompt}}. "
-            "Task: Interpret the requirements and generate the test cases."
-        )
-
-    elif test_type == 'website':
-        return (
-            f"{common_instructions} "
-            "Input Type: Existing Website URL. "
-            "Website URL: {{website_url}}. "
-            "Task: Analyze the website and generate the test cases."
-        )
-
-    else:
-        return None
+def _parse_llm_response(response_text):
+    """
+    Parses the raw text response from the LLM to extract a list of test case dictionaries.
+    This function is robust and can handle variations in the AI's output.
+    """
+    try:
+        # The most reliable way to find the JSON is to look for the start and end of the array
+        json_match = re.search(r'\[.*\]', response_text, re.DOTALL)
+        if json_match:
+            json_str = json_match.group(0)
+            return json.loads(json_str)
+        else:
+            # Fallback for older parsing if the above fails
+            test_cases = []
+            # Regex to find individual test case blocks
+            pattern = re.compile(
+                r"ID:\s*(?P<id>\d+)\s*-\s*(?P<name>.*?)\n"
+                r"Description:\s*(?P<description>.*?)\n"
+                r"Type:\s*(?P<type>.*?)\n"
+                r"Selector:\s*(?P<selector>.*)",
+                re.DOTALL | re.MULTILINE
+            )
+            for match in pattern.finditer(response_text):
+                data = match.groupdict()
+                test_cases.append({
+                    "id": int(data['id']),
+                    "name": data['name'].strip(),
+                    "description": data['description'].strip(),
+                    "type": data['type'].strip(),
+                    "selector": data['selector'].strip()
+                })
+            return test_cases
+    except (json.JSONDecodeError, AttributeError):
+        print("Error: Could not parse JSON from LLM response.")
+        return []
 
 
 def generate_test_cases(test_type, input_data):
     """
-    Generates test cases for a specific input type using the LLM.
+    Generates and parses test cases for a specific input type using the LLM.
     """
     prompt_template = _create_prompt_template(test_type)
-
     if not prompt_template:
         return {"error": "Invalid test type", "details": f"The test type '{test_type}' is not supported."}
 
@@ -70,20 +85,18 @@ def generate_test_cases(test_type, input_data):
     if not llm:
         return {"error": "LLM Initialization Failed", "details": "Could not connect to the language model."}
 
-    # --- UPDATED HANDLING FOR MANUAL PROMPT ---
-    if test_type == 'manual':
-        if not input_data.get('manual_prompt'):
-            return {"error": "Invalid input data", "details": "Manual prompt is missing in the input data."}
+    raw_response = invoke_llm(llm, prompt_template, input_data)
 
-    # Debugging logs to trace input data and prompt
-    print("Debug: Input Data:", input_data)
-    print("Debug: Generated Prompt:", prompt_template)
+    if isinstance(raw_response, dict) and 'error' in raw_response:
+        return raw_response
 
-    try:
-        result = invoke_llm_for_json(llm, prompt_template, input_data)
-        # Debugging log to capture raw response
-        print("Debug: Raw LLM Response:", result)
-        return result
-    except Exception as e:
-        print("Debug: Exception occurred:", str(e))
-        return {"error": "LLM Invocation Failed", "details": str(e)}
+    parsed_tests = _parse_llm_response(raw_response)
+
+    if not parsed_tests:
+        return {"error": "Parsing Failed", "details": "Could not extract valid test cases from the AI response. Please try again."}
+
+    # Re-number test case IDs to be sequential and clean, ensuring consistency
+    for i, test in enumerate(parsed_tests):
+        test['id'] = i + 1
+
+    return parsed_tests

@@ -78,7 +78,7 @@
             </div>
             <div class="step-info">
               <span class="step-number">02</span>
-              <span class="step-title">Generate Tests</span>
+              <span class="step-title">Generate & Select</span>
             </div>
           </div>
           <div class="progress-connector"></div>
@@ -257,10 +257,9 @@
           <div id="step-2" class="pipeline-step">
             <div class="step-card">
               <div class="step-header">
-                <h3><i class="fas fa-cogs"></i> Generate Test Cases</h3>
+                <h3><i class="fas fa-cogs"></i> Generate & Select Tests</h3>
                 <p>
-                  AI is analyzing your input and generating comprehensive test
-                  cases
+                  Generate test cases and select which ones to run
                 </p>
               </div>
 
@@ -312,10 +311,10 @@
             <div class="step-card">
               <div class="step-header">
                 <h3><i class="fas fa-globe"></i> Target Website</h3>
-                <p>Specify where you want to run the generated test cases</p>
+                <p>Specify where you want to run the selected test cases</p>
               </div>
 
-              <!-- NEW: Upload area for direct testing flow -->
+              <!-- Upload area for direct testing flow -->
               <div id="direct-testing-upload" style="display: none;">
                   <div class="form-group">
                       <label>Upload Your Test Case Document</label>
@@ -330,11 +329,7 @@
                   </div>
               </div>
 
-              <!-- Container for selected/parsed tests -->
-              <div id="selected-tests-display-area">
-                  <!-- Selected tests will be displayed here by script.js -->
-              </div>
-
+              <!-- Options for generation flow -->
               <div id="generation-flow-options">
                 <div class="website-options">
                   <div class="website-option">
@@ -448,7 +443,7 @@
                   </div>
                   <div class="summary-content">
                     <h4>Test Cases Ready</h4>
-                    <p><span id="test-count">0</span> test cases generated</p>
+                    <p><span id="test-count">0</span> test cases selected</p>
                   </div>
                 </div>
                 <div class="summary-item">
@@ -489,14 +484,9 @@
           </div>
         </div>
 
-        <!-- NEW: Accordion Container for Generated Tests -->
-        <div id="test-case-accordion-container" class="accordion-container" style="display: none;">
-            <!-- Accordion will be inserted here by script.js for the generation flow -->
-        </div>
-
-        <!-- NEW: Display Area for Parsed Test Cases from Upload -->
-        <div id="parsed-tests-display-container" class="accordion-container" style="display: none;">
-            <!-- Parsed test cases will be displayed here for the direct testing flow -->
+        <!-- Container for Generated/Parsed Test Lists (Displayed below the circle) -->
+        <div id="test-list-display-container" class="accordion-container" style="display: none;">
+            <!-- Test case lists will be inserted here by script.js -->
         </div>
 
         <!-- Results Section -->
