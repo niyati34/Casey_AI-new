@@ -29,7 +29,6 @@
           <nav class="nav">
             <a href="/" class="nav-link">Home</a>
             <a href="/pipeline" class="nav-link active">Pipeline</a>
-            <a href="#features" class="nav-link">Features</a>
           </nav>
         </div>
       </div>
@@ -375,24 +374,24 @@
                     </label>
                   </div>
                 </div>
-
-                <div
-                  class="target-url-form"
-                  id="target-url-form"
-                  style="display: none"
-                >
-                  <div class="form-group">
-                    <label for="target-website-url">Target Website URL</label>
-                    <input
-                      type="url"
-                      id="target-website-url"
-                      placeholder="https://example.com"
-                      class="form-input"
-                    />
-                    <small class="form-hint"
-                      >URL where test cases will be executed</small
-                    >
-                  </div>
+              </div>
+              
+              <div
+                class="target-url-form"
+                id="target-url-form"
+                style="display: none"
+              >
+                <div class="form-group">
+                  <label for="target-website-url">Target Website URL</label>
+                  <input
+                    type="url"
+                    id="target-website-url"
+                    placeholder="https://example.com"
+                    class="form-input"
+                  />
+                  <small class="form-hint"
+                    >URL where test cases will be executed</small
+                  >
                 </div>
               </div>
 
@@ -478,6 +477,10 @@
                 >
                   <i class="fas fa-rocket"></i>
                   Launch Test Execution
+                </button>
+                <button class="btn btn-secondary" onclick="downloadTestResults()" id="download-results-btn" style="display: none;">
+                    <i class="fas fa-download"></i>
+                    Download Results
                 </button>
               </div>
             </div>
