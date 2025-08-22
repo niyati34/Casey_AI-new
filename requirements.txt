@@ -4,3 +4,5 @@ langchain-google-genai
 python-docx
 python-dotenv
 pdfplumber
+selenium
+requests
