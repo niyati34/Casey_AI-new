@@ -1,4 +1,5 @@
 import os
+import json
 from typing import List, Dict, Tuple, Optional
 import re
 import requests
@@ -113,12 +114,79 @@ def _perform_action(driver: webdriver.Chrome, by: By, value: str, description: s
     return "Verified presence only."
 
 
-def _fill_login_and_submit(driver: webdriver.Chrome, description: str) -> str:
-    """Heuristic login flow with defaults or env-provided creds.
-    Defaults match the practice site: student / Password123"""
+def _get_credentials(website_url: str, test: Optional[Dict]) -> Tuple[str, str]:
+    """Resolve credentials in order of precedence:
+    1) test["credentials"] = { username, password }
+    2) CREDENTIALS_JSON env: { "domain": {"username": "..", "password": ".."} }
+    3) VALID_USERNAME/PASSWORD or DEFAULT_USERNAME/PASSWORD env
+    4) Generic fallback user@example.com / Password123!
+    """
+    # From test
+    if test and isinstance(test.get("credentials"), dict):
+        cu = test["credentials"].get("username")
+        cp = test["credentials"].get("password")
+        if cu is not None and cp is not None:
+            return cu, cp
+
+    # From JSON env mapping
+    try:
+        cred_map = os.getenv("CREDENTIALS_JSON")
+        if cred_map:
+            data = json.loads(cred_map)
+            domain = website_url.split("//")[-1].split("/")[0]
+            if domain in data:
+                cu = data[domain].get("username")
+                cp = data[domain].get("password")
+                if cu is not None and cp is not None:
+                    return cu, cp
+    except Exception:
+        pass
+
+    # From individual envs
+    cu = os.getenv("VALID_USERNAME") or os.getenv("DEFAULT_USERNAME")
+    cp = os.getenv("VALID_PASSWORD") or os.getenv("DEFAULT_PASSWORD")
+    if cu and cp:
+        return cu, cp
+
+    # Fallback generic
+    return "user@example.com", "Password123!"
+
+
+def _find_by_label_or_placeholder(driver: webdriver.Chrome, keywords: List[str]) -> Optional[Tuple[By, str]]:
+    """Find an input/textarea by matching label text, placeholder, name, or id against keywords."""
+    kws = [k.lower() for k in keywords]
+    # Try label[for] mapping
+    labels = driver.find_elements(By.TAG_NAME, "label")
+    for lbl in labels:
+        try:
+            text = (lbl.text or "").strip().lower()
+            if any(k in text for k in kws):
+                for_attr = lbl.get_attribute("for")
+                if for_attr:
+                    return By.ID, for_attr
+        except Exception:
+            continue
+
+    # Try placeholder/name/id contains
+    xpath = (
+        "//input|//textarea"
+        "[contains(translate(@placeholder,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'), '{kw}')"
+        " or contains(translate(@name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'), '{kw}')"
+        " or contains(translate(@id,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'), '{kw}')]"
+    )
+    for kw in kws:
+        try:
+            el = WebDriverWait(driver, 2).until(EC.presence_of_element_located((By.XPATH, xpath.format(kw=kw))))
+            return By.XPATH, xpath.format(kw=kw)
+        except Exception:
+            continue
+    return None
+
+
+def _fill_login_and_submit(driver: webdriver.Chrome, description: str, website_url: str, test: Optional[Dict]) -> str:
+    """Heuristic login flow with configurable creds and broad field detection."""
     desc = (description or "").lower()
-    valid_user = os.getenv("VALID_USERNAME") or os.getenv("DEFAULT_USERNAME") or "student"
-    valid_pass = os.getenv("VALID_PASSWORD") or os.getenv("DEFAULT_PASSWORD") or "Password123"
+    valid_user, valid_pass = _get_credentials(website_url, test)
 
     # Choose credentials based on negative/empty scenarios
     user_val = valid_user
@@ -136,12 +204,16 @@ def _fill_login_and_submit(driver: webdriver.Chrome, description: str) -> str:
     if ("both" in desc and "incorrect" in desc) or "both username and password incorrect" in desc:
         user_val = "wrong_user"; pass_val = "wrong_pass_123"
 
-    # Candidate fields typical of many login pages
+    # Candidate fields typical of many login pages (broad)
     username_candidates = [
         (By.CSS_SELECTOR, "input#username"),
+        (By.CSS_SELECTOR, "input[type='email']"),
         (By.CSS_SELECTOR, "input[name*='user' i]"),
         (By.CSS_SELECTOR, "input[id*='user' i]"),
-        (By.CSS_SELECTOR, "input[type='email']"),
+        (By.CSS_SELECTOR, "input[name*='login' i]"),
+        (By.CSS_SELECTOR, "input[id*='login' i]"),
+        (By.CSS_SELECTOR, "input[name*='identifier' i]"),
+        (By.CSS_SELECTOR, "input[id*='identifier' i]"),
         (By.CSS_SELECTOR, "input[type='text']"),
     ]
     password_candidates = [
@@ -159,8 +231,20 @@ def _fill_login_and_submit(driver: webdriver.Chrome, description: str) -> str:
         (By.CSS_SELECTOR, "button[id*='login' i]"),
     ]
 
-    user_input = _find_first(driver, username_candidates)
-    pass_input = _find_first(driver, password_candidates)
+    # Try direct candidates, else try label/placeholder matching
+    try:
+        user_input = _find_first(driver, username_candidates)
+    except Exception:
+        alt = _find_by_label_or_placeholder(driver, ["email", "user", "login", "identifier", "account"])
+        if not alt:
+            raise
+        user_input = WebDriverWait(driver, 5).until(EC.presence_of_element_located(alt))
+
+    try:
+        pass_input = _find_first(driver, password_candidates)
+    except Exception:
+        altp = _find_by_label_or_placeholder(driver, ["password", "passcode"]) or (By.CSS_SELECTOR, "input[type='password']")
+        pass_input = WebDriverWait(driver, 5).until(EC.presence_of_element_located(altp))
     submit_btn = _find_first(driver, submit_candidates)
 
     user_input.clear(); user_input.send_keys(user_val)
@@ -168,20 +252,95 @@ def _fill_login_and_submit(driver: webdriver.Chrome, description: str) -> str:
     submit_btn.click()
 
     # Wait for feedback: URL or page content change
-    WebDriverWait(driver, 10).until(lambda d: d.current_url != d.current_url or True)
+    # Short settle wait
+    WebDriverWait(driver, 5).until(lambda d: True)
     src = driver.page_source.lower()
     cur = driver.current_url.lower()
 
-    # Assertions based on description intent
-    if any(k in desc for k in ["success", "lands on", "secure", "works"]):
-        if any(t in (cur + src) for t in ["success", "logged", "secure"]):
+    # Assertions based on description intent or explicit expectations
+    expectations = (test or {}).get("assert") or {}
+    exp_url = expectations.get("url_contains") if isinstance(expectations, dict) else None
+    exp_text = expectations.get("text_contains") if isinstance(expectations, dict) else None
+    exp_not_text = expectations.get("not_text_contains") if isinstance(expectations, dict) else None
+
+    if exp_url and exp_url.lower() not in cur:
+        raise AssertionError(f"URL did not contain expected fragment: {exp_url}")
+    if exp_text and exp_text.lower() not in src:
+        raise AssertionError(f"Page did not contain expected text: {exp_text}")
+    if exp_not_text and exp_not_text.lower() in src:
+        raise AssertionError(f"Page contained unexpected text: {exp_not_text}")
+
+    if any(k in desc for k in ["success", "lands on", "secure", "works", "valid"]):
+        if any(t in (cur + src) for t in ["success", "logged", "secure", "welcome", "dashboard"]):
             return "Login success heuristic matched."
         raise AssertionError("Expected successful login feedback not found")
-    if any(k in desc for k in ["fail", "error", "invalid", "required"]):
-        if any(t in src for t in ["invalid", "error", "required", "unsuccessful"]):
+    if any(k in desc for k in ["fail", "error", "invalid", "required", "incorrect"]):
+        if any(t in src for t in ["invalid", "error", "required", "unsuccessful", "incorrect", "try again"]):
             return "Login failure heuristic matched."
         raise AssertionError("Expected error message not found")
     return "Submitted login form."
+
+
+def _fill_form_generic(driver: webdriver.Chrome, data: Dict[str, str]) -> str:
+    """Fill a generic form using provided data mapping.
+    Keys can be field hints (label text, placeholder, name, id) or CSS/XPath selectors.
+    """
+    filled = 0
+    for key, value in (data or {}).items():
+        by, selector = None, None
+        # If key looks like a selector prefix, use it directly
+        low = str(key).lower().strip()
+        if low.startswith("xpath=") or low.startswith("//") or low.startswith(".//"):
+            by, selector = By.XPATH, key.split("=", 1)[1] if "=" in key else key
+        elif low.startswith("css=") or low.startswith("css:"):
+            by, selector = By.CSS_SELECTOR, key.split(":", 1)[1] if ":" in key else key.split("=", 1)[1]
+        elif low.startswith("id="):
+            by, selector = By.ID, key.split("=", 1)[1]
+        elif low.startswith("name="):
+            by, selector = By.NAME, key.split("=", 1)[1]
+
+        elem = None
+        try:
+            if by and selector:
+                elem = WebDriverWait(driver, 5).until(EC.presence_of_element_located((by, selector)))
+            else:
+                # Fuzzy by label/placeholder/name/id
+                alt = _find_by_label_or_placeholder(driver, [low])
+                if alt:
+                    elem = WebDriverWait(driver, 5).until(EC.presence_of_element_located(alt))
+        except Exception:
+            elem = None
+
+        if elem is None:
+            continue
+        try:
+            tag = elem.tag_name.lower()
+            t = (elem.get_attribute("type") or "").lower()
+            if tag in ("input", "textarea") and t not in ("checkbox", "radio", "submit", "button"):
+                elem.clear()
+                elem.send_keys(str(value))
+                filled += 1
+            elif t in ("checkbox",):
+                should = str(value).strip().lower() in ("1", "true", "yes", "on")
+                is_checked = elem.is_selected()
+                if should != is_checked:
+                    elem.click()
+                    filled += 1
+        except Exception:
+            continue
+
+    # Submit form if a submit control exists
+    try:
+        submit = _find_first(driver, [
+            (By.CSS_SELECTOR, "button[type='submit']"),
+            (By.CSS_SELECTOR, "input[type='submit']"),
+            (By.XPATH, "//button[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'submit' ) or contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'send') or contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'save') or contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'continue')]")
+        ])
+        submit.click()
+    except Exception:
+        pass
+
+    return f"Filled {filled} field(s) and attempted submit."
 
 
 def _responsive_check(driver: webdriver.Chrome, description: str) -> str:
@@ -235,8 +394,10 @@ def run_ui_tests(website_url: str, tests: List[Dict]) -> List[Dict]:
                         action_msg = "Navigated to password reset per heuristic."
                     except Exception:
                         action_msg = "Forgot password link not found."
-                elif "login" in desc_lower:
-                    action_msg = _fill_login_and_submit(driver, description)
+                elif (test.get("action") or "").lower() == "login" or "login" in desc_lower or "sign in" in desc_lower:
+                    action_msg = _fill_login_and_submit(driver, description, website_url, test)
+                elif (test.get("action") or "").lower() in ("formsubmit", "submit", "form") or ("form" in desc_lower and "submit" in desc_lower):
+                    action_msg = _fill_form_generic(driver, test.get("data") or {})
                 elif "responsive" in desc_lower or "mobile" in desc_lower:
                     action_msg = _responsive_check(driver, description)
                 else:
