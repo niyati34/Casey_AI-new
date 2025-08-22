@@ -142,7 +142,7 @@ body {
 .panel-hero {
   position: relative;
   z-index: 2;
-  padding: 15px 25px 15px 25px;
+  padding: 80px 25px 15px 25px; /* Restore top padding for navbar space */
   height: 100vh; /* full hero; navbar overlays */
   display: flex;
   flex-direction: column;
@@ -255,7 +255,9 @@ body {
     gap: 16px;
     flex-wrap: wrap;
   }
-  /* No extra margin on hero; sticky nav overlays when active */
+  .panel-hero {
+    padding-top: 120px; /* Extra space for taller mobile navbar */
+  }
 }
 
 /* Additional Sections - Matching Theme */
@@ -263,7 +265,7 @@ body {
   padding: 80px 40px;
   max-width: 1200px;
   margin: 0 auto;
-  scroll-margin-top: 80px; /* Account for fixed navbar when jumping to sections */
+  scroll-margin-top: 100px; /* Account for sticky navbar when jumping to sections */
 }
 
 .section-header {

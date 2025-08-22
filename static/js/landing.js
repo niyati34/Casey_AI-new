@@ -95,13 +95,13 @@ function animateStatBlock(block) {
 
 function setupStickyTopbar() {
   const topbar = document.querySelector('.panel-topbar');
-  const hero = document.querySelector('.panel-hero');
-  if (!topbar || !hero) return;
+  if (!topbar) return;
 
   const update = () => {
-    const heroBottom = hero.getBoundingClientRect().bottom;
-    const threshold = 1; // when hero leaves viewport
-    if (heroBottom <= threshold) {
+    const scrollY = window.scrollY || window.pageYOffset;
+    const threshold = 100; // Show sticky navbar after scrolling 100px
+    
+    if (scrollY > threshold) {
       topbar.classList.add('is-sticky');
     } else {
       topbar.classList.remove('is-sticky');
