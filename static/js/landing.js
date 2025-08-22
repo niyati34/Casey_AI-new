@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   wirePanelNav();
   wireCta();
   setupStatAnimations();
+  setupStickyTopbar();
 });
 
 function wirePanelNav() {
@@ -90,4 +91,29 @@ function animateStatBlock(block) {
     }
   }
   requestAnimationFrame(tick);
+}
+
+function setupStickyTopbar() {
+  const topbar = document.querySelector('.panel-topbar');
+  const hero = document.querySelector('.panel-hero');
+  if (!topbar || !hero) return;
+
+  const update = () => {
+    const heroBottom = hero.getBoundingClientRect().bottom;
+    const threshold = 1; // when hero leaves viewport
+    if (heroBottom <= threshold) {
+      topbar.classList.add('is-sticky');
+    } else {
+      topbar.classList.remove('is-sticky');
+    }
+  };
+
+  // Respond to scroll and resize
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  // In case we land on a deep link
+  window.addEventListener('hashchange', () => setTimeout(update, 0));
+
+  // Initial state
+  update();
 }
