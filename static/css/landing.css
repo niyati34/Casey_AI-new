@@ -238,104 +238,122 @@ body {
 
 /* Additional Sections */
 .section {
-  padding: 80px 20px;
+  padding: 60px 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 .section-header {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 40px;
 }
 
 .section-title {
-  font-size: clamp(32px, 5vw, 48px);
-  font-weight: 800;
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 600;
   color: #ffffff;
-  margin-bottom: 16px;
-  letter-spacing: -1px;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
 }
 
 .section-subtitle {
-  font-size: 18px;
-  color: rgba(255, 255, 255, 0.8);
-  max-width: 600px;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 500px;
   margin: 0 auto;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
-/* Features Section */
+/* Features Section - Minimalistic Design */
 #features {
-  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.2) 100%);
+  background: transparent;
+  padding: 40px 0;
 }
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 40px;
-  margin-top: 60px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 40px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .feature-card {
-  background: rgba(15, 17, 22, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 40px 30px;
+  background: rgba(15, 17, 22, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px 20px;
   text-align: center;
-  backdrop-filter: blur(20px);
-  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
 }
 
 .feature-card:hover {
-  transform: translateY(-10px);
-  border-color: #c9b6ff;
-  box-shadow: 0 20px 40px rgba(201, 182, 255, 0.2);
+  transform: translateY(-2px);
+  border-color: rgba(201, 182, 255, 0.3);
+  background: rgba(15, 17, 22, 0.6);
 }
 
 .feature-icon {
-  font-size: 48px;
+  font-size: 28px;
   color: #c9b6ff;
-  margin-bottom: 24px;
-}
-
-.feature-card h3 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffffff;
   margin-bottom: 16px;
 }
 
-.feature-card p {
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.6;
-  font-size: 16px;
+.feature-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 8px;
 }
 
-/* Workflow Section */
+.feature-card p {
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+  font-size: 14px;
+}
+
+/* Workflow Section - Minimalistic Design */
 #workflow {
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%);
+  background: transparent;
+  padding: 40px 0;
 }
 
 .workflow-steps {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
-  margin-top: 60px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .workflow-step {
   text-align: center;
   position: relative;
+  padding: 20px 16px;
+  background: rgba(15, 17, 22, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.workflow-step:hover {
+  background: rgba(15, 17, 22, 0.5);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .workflow-step::after {
-  content: '→';
+  content: "→";
   position: absolute;
-  right: -15px;
+  right: -12px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 24px;
-  color: #c9b6ff;
+  font-size: 16px;
+  color: rgba(201, 182, 255, 0.6);
   font-weight: bold;
 }
 
@@ -345,132 +363,140 @@ body {
 
 .step-number {
   display: inline-block;
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, #c9b6ff 0%, #8e79ff 100%);
+  width: 32px;
+  height: 32px;
+  background: rgba(201, 182, 255, 0.2);
+  border: 1px solid rgba(201, 182, 255, 0.4);
   border-radius: 50%;
-  line-height: 60px;
-  font-size: 24px;
-  font-weight: 800;
-  color: #ffffff;
-  margin-bottom: 20px;
-}
-
-.workflow-step h3 {
-  font-size: 20px;
-  font-weight: 700;
-  color: #ffffff;
+  line-height: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #c9b6ff;
   margin-bottom: 12px;
 }
 
-.workflow-step p {
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.5;
-  font-size: 14px;
+.workflow-step h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 8px;
 }
 
-/* Contact Section */
+.workflow-step p {
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+  font-size: 13px;
+}
+
+/* Contact Section - Minimalistic Design */
 #contact {
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%);
+  background: transparent;
+  padding: 40px 0;
 }
 
 .contact-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  margin-top: 60px;
+  gap: 40px;
+  margin-top: 40px;
   align-items: start;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .contact-info h3 {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 600;
   color: #ffffff;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .contact-info p {
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.6;
-  margin-bottom: 30px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  margin-bottom: 24px;
+  font-size: 14px;
 }
 
 .contact-item {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .contact-item i {
-  font-size: 20px;
+  font-size: 16px;
   color: #c9b6ff;
-  width: 24px;
+  width: 20px;
 }
 
 .contact-item span {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
 }
 
 .contact-form {
-  background: rgba(15, 17, 22, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 40px;
-  backdrop-filter: blur(20px);
+  background: rgba(15, 17, 22, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .form-group label {
   display: block;
   color: #ffffff;
-  font-weight: 600;
-  margin-bottom: 8px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  font-size: 14px;
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
   color: #ffffff;
-  font-size: 14px;
-  backdrop-filter: blur(10px);
+  font-size: 13px;
+  backdrop-filter: blur(5px);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #c9b6ff;
-  box-shadow: 0 0 0 2px rgba(201, 182, 255, 0.2);
+  border-color: rgba(201, 182, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .form-group textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 80px;
 }
 
 .submit-btn {
-  background: linear-gradient(135deg, #c9b6ff 0%, #8e79ff 100%);
+  background: rgba(201, 182, 255, 0.8);
   color: #ffffff;
   border: none;
-  padding: 14px 28px;
-  border-radius: 10px;
-  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   width: 100%;
+  font-size: 14px;
 }
 
 .submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(201, 182, 255, 0.3);
+  background: rgba(201, 182, 255, 1);
+  transform: translateY(-1px);
 }
 
 /* Footer */
@@ -513,27 +539,100 @@ body {
 /* Responsive Design for New Sections */
 @media (max-width: 768px) {
   .section {
-    padding: 60px 20px;
+    padding: 40px 15px;
   }
-  
+
+  .section-title {
+    font-size: 22px;
+  }
+
+  .section-subtitle {
+    font-size: 14px;
+  }
+
   .features-grid {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 16px;
+    margin-top: 30px;
   }
-  
+
+  .feature-card {
+    padding: 20px 16px;
+  }
+
+  .feature-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+
+  .feature-card h3 {
+    font-size: 16px;
+  }
+
+  .feature-card p {
+    font-size: 13px;
+  }
+
   .workflow-steps {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
-  
+
+  .workflow-step {
+    padding: 16px 12px;
+  }
+
   .workflow-step::after {
     display: none;
   }
-  
+
+  .step-number {
+    width: 28px;
+    height: 28px;
+    line-height: 26px;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .workflow-step h3 {
+    font-size: 15px;
+  }
+
+  .workflow-step p {
+    font-size: 12px;
+  }
+
   .contact-content {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 30px;
   }
-  
+
+  .contact-form {
+    padding: 20px;
+  }
+
+  .contact-info h3 {
+    font-size: 18px;
+  }
+
+  .contact-info p {
+    font-size: 13px;
+  }
+
+  .contact-item {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .contact-item i {
+    font-size: 14px;
+    width: 18px;
+  }
+
+  .contact-item span {
+    font-size: 13px;
+  }
+
   .footer-links {
     flex-direction: column;
     gap: 15px;

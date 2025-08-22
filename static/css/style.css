@@ -1201,3 +1201,54 @@ body {
     font-weight: 600;
     margin-bottom: 5px;
 }
+
+/* Footer Styles */
+.footer {
+  background: rgba(15, 17, 22, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 40px 20px 20px;
+  text-align: center;
+  margin-top: 60px;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: #c9b6ff;
+}
+
+.footer-text {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Responsive Footer */
+@media (max-width: 768px) {
+  .footer-links {
+    gap: 20px;
+  }
+  
+  .footer-links a {
+    font-size: 13px;
+  }
+}
