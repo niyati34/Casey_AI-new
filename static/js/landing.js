@@ -1,4 +1,4 @@
-// Landing Page JavaScript (aligned with current DOM)
+// Landing Page JavaScript
 document.addEventListener("DOMContentLoaded", function () {
   wirePanelNav();
   wireCta();
@@ -56,9 +56,10 @@ function animateStatBlock(block) {
   const numEl = block.querySelector(".stat-num");
   if (!numEl || numEl.dataset.animated) return;
   const raw = (numEl.textContent || "").trim();
-  // Support formats like 192k, 34, 99.9%
+  // Support formats like 500k+, 12+, 99.9%
   const isPercent = raw.includes("%");
   const isK = raw.toLowerCase().includes("k");
+  const isPlus = raw.includes("+");
   const clean = raw.replace(/[^0-9.]/g, "");
   const target = parseFloat(clean || "0");
   if (!isFinite(target)) return;
@@ -71,15 +72,22 @@ function animateStatBlock(block) {
     const t = Math.min(1, (now - start) / duration);
     const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
     let val = target * eased;
-    if (!isPercent) val = Math.round(isK ? val : Math.round(val));
+    
+    let displayVal;
+    if (isPercent) {
+        displayVal = val.toFixed(1) + "%";
+    } else {
+        val = Math.round(val);
+        displayVal = isK ? val + "k" : String(val);
+        if(isPlus) displayVal += "+";
+    }
 
-    numEl.textContent = isPercent
-      ? val.toFixed(1) + "%"
-      : isK
-      ? val + "k"
-      : String(val);
-    if (t < 1) requestAnimationFrame(tick);
-    else numEl.textContent = raw; // snap to original exact formatting
+    numEl.textContent = displayVal;
+    if (t < 1) {
+        requestAnimationFrame(tick);
+    } else {
+        numEl.textContent = raw; // snap to original exact formatting
+    }
   }
   requestAnimationFrame(tick);
 }

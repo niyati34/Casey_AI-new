@@ -9,24 +9,24 @@ def _create_prompt_template(test_type):
     and properly escapes the example curly braces.
     """
     common_instructions = (
-        "You are an expert QA engineer. Your task is to generate a JSON array of test case objects based on the provided input. "
-        "Each object in the array must have the following keys: 'id', 'name', 'description', 'type', and 'selector'. "
-        "Do not include any introductory text, notes, or any text outside of the JSON array. "
-        "The response MUST start with '[' and end with ']'.\n"
-        "Generate exactly 5 test cases.\n"
-        "Example format:\n"
-        """
+                "You are an expert QA engineer. Your task is to generate a JSON array of test case objects based on the provided input. "
+                "Each object in the array must have the following keys: 'id', 'name', 'description', 'type', and 'selector'. "
+                "Do not include any introductory text, notes, or any text outside of the JSON array. "
+                "The response MUST start with '[' and end with ']'.\n"
+                "Generate as many unique and relevant test cases as possible, covering all possible scenarios, edge cases, and variations.\n"
+                "Example format:\n"
+                """
 [
-  {{
-    "id": 1,
-    "name": "Example Test Case",
-    "description": "This is an example description.",
-    "type": "Functional",
-    "selector": "#example-id"
-  }}
+    {{
+        "id": 1,
+        "name": "Example Test Case",
+        "description": "This is an example description.",
+        "type": "Functional",
+        "selector": "#example-id"
+    }}
 ]
-        """
-    )
+                """
+        )
 
     prompt_map = {
         'figma': f"{common_instructions}\nInput Type: Figma Design\nFigma File Key: {{figma_key}}",

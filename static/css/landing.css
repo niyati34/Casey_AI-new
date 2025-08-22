@@ -35,11 +35,6 @@ body {
   height: 100%;
 }
 
-/* Full-page subtle shapes (optional, low contrast) */
-.stage-bg {
-  display: none;
-}
-
 /* Stage and full-screen panel */
 .stage {
   display: block;
@@ -68,16 +63,6 @@ body {
 }
 
 /* Center glow and edge vignette layers */
-.panel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  /* Optional additional glow to enhance the gradient effect */
-  background: none;
-  pointer-events: none;
-}
-
 .panel::after {
   content: "";
   position: absolute;
@@ -90,49 +75,6 @@ body {
   );
   pointer-events: none;
 }
-
-/* Variant B: slightly lower center and broader bright core for A/B testing */
-.panel.variant-b {
-  background: linear-gradient(
-      to bottom,
-      #0b0b0f 0%,
-      rgba(11, 11, 15, 0.96) 12%,
-      rgba(11, 11, 15, 0.62) 30%,
-      rgba(11, 11, 15, 0) 54%
-    ),
-    radial-gradient(
-      155% 135% at 50% 32%,
-      #f1eefc 0%,
-      #f1eefc 10%,
-      #d6c3fb 28%,
-      #a187d1 54%,
-      #4e4074 80%,
-      #151415 100%
-    );
-}
-.panel.variant-b::before {
-  background: radial-gradient(
-      64% 56% at 50% 32%,
-      rgba(255, 255, 255, 0.6) 0%,
-      rgba(255, 255, 255, 0.28) 38%,
-      rgba(255, 255, 255, 0) 74%
-    ),
-    radial-gradient(
-      82% 70% at 52% 42%,
-      rgba(255, 255, 255, 0.14) 0%,
-      rgba(255, 255, 255, 0.07) 42%,
-      rgba(255, 255, 255, 0) 82%
-    );
-}
-.panel.variant-b::after {
-  background: radial-gradient(
-    96% 92% at 50% 54%,
-    rgba(0, 0, 0, 0.16) 44%,
-    rgba(0, 0, 0, 0.6) 100%
-  );
-}
-
-/* Geometric overlay removed */
 
 /* Topbar */
 .panel-topbar {
@@ -150,10 +92,6 @@ body {
   gap: 8px;
   text-decoration: none;
   color: var(--text-white);
-}
-.brand-mark {
-  font-weight: 800;
-  opacity: 0.85;
 }
 .brand-name {
   font-weight: 700;
@@ -196,7 +134,7 @@ body {
   line-height: 1.06;
   margin-top: 20px;
 }
-/* Removed intro-mark styles as we removed the character */
+
 .title-line {
   display: block;
   font-weight: 800;
