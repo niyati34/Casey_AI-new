@@ -1,6 +1,15 @@
 import re
 import json
+from typing import List, Dict, Any
 from llm_utils import get_llm, invoke_llm
+
+try:
+    from jsonschema import validate as jsonschema_validate
+    from jsonschema.exceptions import ValidationError as JsonSchemaValidationError
+except Exception:
+    jsonschema_validate = None
+    class JsonSchemaValidationError(Exception):
+        pass
 
 def _create_prompt_template(test_type):
     """
@@ -9,11 +18,12 @@ def _create_prompt_template(test_type):
     and properly escapes the example curly braces.
     """
     common_instructions = (
-                "You are an expert QA engineer. Your task is to generate a JSON array of test case objects based on the provided input. "
-                "Each object in the array must have the following keys: 'id', 'name', 'description', 'type', and 'selector'. "
-                "Do not include any introductory text, notes, or any text outside of the JSON array. "
-                "The response MUST start with '[' and end with ']'.\n"
-                "Generate as many unique and relevant test cases as possible, covering all possible scenarios, edge cases, and variations.\n"
+                "You are an expert QA engineer. Generate a JSON array of test case objects from the provided input. "
+                "Strictly output ONLY a JSON array (no prose). Start with '[' and end with ']'. "
+                "Each object must include: 'id' (integer), 'name' (string), 'description' (string), 'type' (string: one of UI, Functional, API), "
+                "and 'selector' (for UI/Functional) OR 'endpoint' (for API). "
+                "Favor realistic, actionable steps with clear selectors or endpoints. "
+                "Cover core flows and edge cases.\n"
                 "Example format:\n"
                 """
 [
@@ -36,7 +46,7 @@ def _create_prompt_template(test_type):
     }
     return prompt_map.get(test_type)
 
-def _parse_llm_response(response_text):
+def _parse_llm_response(response_text: str) -> List[Dict[str, Any]]:
     """
     Parses the raw text response from the LLM to extract a list of test case dictionaries.
     This function is robust and can handle variations in the AI's output.
@@ -73,6 +83,59 @@ def _parse_llm_response(response_text):
         return []
 
 
+SCHEMA = {
+    "type": "array",
+    "items": {
+        "type": "object",
+        "required": ["id", "name", "description"],
+        "properties": {
+            "id": {"type": "integer", "minimum": 1},
+            "name": {"type": "string", "minLength": 1},
+            "description": {"type": "string", "minLength": 1},
+            "type": {"type": "string"},
+            "selector": {"type": "string"},
+            "endpoint": {"type": "string"},
+            "method": {"type": "string"}
+        },
+        "additionalProperties": True
+    }
+}
+
+def _validate_and_repair(tests: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    # Basic normalization and fill-ins
+    norm: List[Dict[str, Any]] = []
+    for i, t in enumerate(tests, start=1):
+        item = dict(t)
+        item["id"] = int(item.get("id", i))
+        item["name"] = item.get("name") or f"Test {i}"
+        item["description"] = item.get("description") or ""
+        # Coerce type bucket
+        ty = (item.get("type") or "").strip().lower()
+        if ty in ("ui", "functional", "smoke", "regression"):
+            item["type"] = "UI"
+        elif ty in ("api", "http"):
+            item["type"] = "API"
+        else:
+            item["type"] = item.get("type") or "Functional"
+        norm.append(item)
+
+    # Schema validate if jsonschema is present
+    if jsonschema_validate:
+        try:
+            jsonschema_validate(instance=norm, schema=SCHEMA)
+        except JsonSchemaValidationError as e:
+            # If validation fails, try minimal repair: ensure ids are ints, non-empty strings
+            repaired = []
+            for i, t in enumerate(norm, start=1):
+                t["id"] = int(t.get("id", i))
+                t["name"] = str(t.get("name", f"Test {i}")).strip() or f"Test {i}"
+                t["description"] = str(t.get("description", "")).strip() or "No description"
+                repaired.append(t)
+            norm = repaired
+            # Best effort, skip re-raising
+    return norm
+
+
 def generate_test_cases(test_type, input_data):
     """
     Generates and parses test cases for a specific input type using the LLM.
@@ -85,6 +148,7 @@ def generate_test_cases(test_type, input_data):
     if not llm:
         return {"error": "LLM Initialization Failed", "details": "Could not connect to the language model."}
 
+    # Primary attempt
     raw_response = invoke_llm(llm, prompt_template, input_data)
 
     if isinstance(raw_response, dict) and 'error' in raw_response:
@@ -92,11 +156,19 @@ def generate_test_cases(test_type, input_data):
 
     parsed_tests = _parse_llm_response(raw_response)
 
+    # Retry once with stricter instruction if parsing failed
+    if not parsed_tests:
+        strict_template = prompt_template + "\nIMPORTANT: Output only a strict JSON array with objects, no backticks, no prose."
+        raw_response = invoke_llm(llm, strict_template, input_data)
+        if isinstance(raw_response, dict) and 'error' in raw_response:
+            return raw_response
+        parsed_tests = _parse_llm_response(raw_response)
+
     if not parsed_tests:
         return {"error": "Parsing Failed", "details": "Could not extract valid test cases from the AI response. Please try again."}
 
-    # Re-number test case IDs to be sequential and clean, ensuring consistency
-    for i, test in enumerate(parsed_tests):
-        test['id'] = i + 1
-
-    return parsed_tests
+    # Normalize, validate, and re-number
+    cleaned = _validate_and_repair(parsed_tests)
+    for i, t in enumerate(cleaned, start=1):
+        t['id'] = i
+    return cleaned

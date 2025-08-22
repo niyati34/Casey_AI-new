@@ -6,3 +6,4 @@ python-dotenv
 pdfplumber
 selenium
 requests
+jsonschema

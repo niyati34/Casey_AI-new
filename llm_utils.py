@@ -20,16 +20,22 @@ def get_llm():
 def invoke_llm(llm, prompt_template, input_data):
     """
     Invokes the OpenRouter LLM with a given prompt template and input data, returning the raw string response.
+    Formats placeholders in the template using keys from input_data (e.g. {website_url}).
     """
     if not llm:
         return {"error": "LLM not initialized", "details": "The language model could not be started."}
 
     # Format the prompt using the template and input_data
     try:
-        if '{input}' in prompt_template:
-            prompt = prompt_template.format(input=input_data)
+        # Prefer mapping-based formatting: supports {website_url}, {file_name}, etc.
+        if isinstance(input_data, dict):
+            prompt = prompt_template.format(**input_data)
         else:
-            prompt = prompt_template
+            # Fallback: support legacy {input}
+            prompt = (
+                prompt_template.format(input=input_data)
+                if '{input}' in prompt_template else prompt_template
+            )
     except Exception as e:
         return {"error": "Prompt formatting failed", "details": str(e)}
 
