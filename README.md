@@ -124,3 +124,33 @@ The frontend is what the user sees and interacts with in their browser.
 -   **`generateTestCases()`:** When the "Generate Test Cases" button is clicked, this function gathers the user's input, sends it to the `/api/generate-test` endpoint on the backend, and waits for the response.
 -   **`displayTestCasesAccordion()`:** Upon a successful response from the backend, this function dynamically creates the HTML for the accordion list of test cases. It's responsible for creating the checkboxes and ensuring that any previously selected tests remain checked if the user navigates back.
 -   **`toggleTestCaseSelection()`:** This function is triggered every time a user checks or unchecks a test case. It updates the `selectedTestCases` array, which keeps track of which tests will be sent to the next phase for execution.
+
+---
+
+## 🧪 Test Execution (Selenium)
+
+The backend provides `/api/run-test` to execute selected tests on a target website.
+
+Payload shape:
+
+```json
+{
+    "website_url": "https://example.com",
+    "test_cases": [
+        { "id": 1, "name": "Click Login", "description": "Click the login button", "type": "ui", "selector": "#login" }
+    ]
+}
+```
+
+What happens:
+- UI-like tests (`ui`, `functional`, `smoke`, `regression`) are executed via Selenium (Chrome) using Selenium Manager (no manual driver install).
+- If a test description includes words like "click", the element is clicked; otherwise we verify presence.
+- Non-UI test types are currently marked `skipped`.
+
+Environment variables (optional):
+- `SELENIUM_HEADLESS` (default `1`): set `0` to see the browser.
+- `SELENIUM_WAIT_TIMEOUT` (default `15`): element wait seconds.
+- `SELENIUM_PAGELOAD_TIMEOUT` (default `30`): page load timeout seconds.
+- `SELENIUM_WINDOW_SIZE` (default `1366,900`).
+
+Results can be downloaded via `/api/download-results`.

@@ -7,6 +7,7 @@ from docx import Document  # <-- This line was missing
 from test_case_generation import generate_test_cases
 # --- NEW: Import from our new document parser file ---
 from document_parser import read_file_content, parse_document_for_tests
+from test_executor import run_tests
 
 app = Flask(__name__)
 
@@ -97,12 +98,16 @@ def run_test():
         data = request.get_json()
         website_url = data.get('website_url')
         test_cases = data.get('test_cases', [])
-        
-        # TODO: Implement test execution logic
+        if not website_url:
+            return jsonify({'status': 'error', 'message': 'website_url is required'}), 400
+        if not isinstance(test_cases, list) or len(test_cases) == 0:
+            return jsonify({'status': 'error', 'message': 'test_cases must be a non-empty array'}), 400
+
+        results = run_tests(website_url, test_cases)
         return jsonify({
             'status': 'success',
             'message': f'Tests executed on website: {website_url}',
-            'results': [] # Placeholder for actual test results
+            'results': results
         })
         
     except Exception as e:
@@ -161,6 +166,38 @@ def download_tests():
         doc_output_path = "generated_test_cases.docx"
         document.save(doc_output_path)
         
+        return send_file(doc_output_path, as_attachment=True)
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/api/download-results', methods=['POST'])
+def download_results():
+    """
+    API endpoint for generating and downloading a DOCX of test execution results.
+    """
+    try:
+        data = request.get_json()
+        test_results = data.get('test_results', [])
+
+        if not test_results:
+            return jsonify({'status': 'error', 'message': 'No test results provided'}), 400
+
+        document = Document()
+        document.add_heading('Test Execution Results', 0)
+
+        for result in test_results:
+            name = result.get('name', 'Unnamed Test')
+            status = result.get('status', 'unknown').upper()
+            message = result.get('message', '')
+            document.add_heading(name, level=1)
+            document.add_paragraph(f"Status: {status}")
+            if message:
+                document.add_paragraph(f"Details: {message}")
+            document.add_paragraph()
+
+        doc_output_path = "test_execution_results.docx"
+        document.save(doc_output_path)
         return send_file(doc_output_path, as_attachment=True)
 
     except Exception as e:
