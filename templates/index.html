@@ -16,6 +16,37 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+      import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCU9YMX1CO_SxfETAjqvRZpUqjuBy3c0l0",
+        authDomain: "bugzyai.firebaseapp.com",
+        projectId: "bugzyai",
+        storageBucket: "bugzyai.firebasestorage.app",
+        messagingSenderId: "823760999152",
+        appId: "1:823760999152:web:c0c72e155609fef4ffa835",
+        measurementId: "G-E44DDXT37J"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const db = getFirestore(app);
+
+      // Make Firebase available globally
+      window.firebaseApp = app;
+      window.firebaseDB = db;
+      window.firebaseAddDoc = addDoc;
+      window.firebaseCollection = collection;
+      window.firebaseServerTimestamp = serverTimestamp;
+    </script>
   </head>
   <body>
     <!-- Main Panel -->
@@ -24,7 +55,8 @@
         <!-- Top bar inside panel -->
         <div class="panel-topbar">
           <a href="#" class="brand">
-            <span class="brand-name">Casey<span class="thin"> AI</span></span>
+            <i class="fas fa-robot" style="margin-right: 8px; color: #c7b6ff;"></i>
+            <span class="brand-name">BugzyAI</span>
           </a>
           <nav class="panel-nav">
             <a href="#features" class="panel-link">FEATURES</a>
@@ -229,35 +261,7 @@
         </div>
 
         <div class="contact-content">
-          <div class="contact-info">
-            <h3>Contact Information</h3>
-            <p>
-              Ready to revolutionize your testing process? Our team is here to
-              guide you through every step of your automation journey.
-            </p>
-
-            <div class="contact-item">
-              <i class="fas fa-envelope"></i>
-              <span>hello@bugzyai.com</span>
-            </div>
-
-            <div class="contact-item">
-              <i class="fas fa-phone"></i>
-              <span>+1 (555) 123-4567</span>
-            </div>
-
-            <div class="contact-item">
-              <i class="fas fa-map-marker-alt"></i>
-              <span>San Francisco, CA</span>
-            </div>
-
-            <div class="contact-item">
-              <i class="fas fa-clock"></i>
-              <span>24/7 Support Available</span>
-            </div>
-          </div>
-
-          <div class="contact-form">
+          <div class="contact-form centered-form">
             <h3>Send us a message</h3>
             <p>
               Fill out the form below and we'll get back to you within 24 hours.
@@ -306,8 +310,16 @@
                 ></textarea>
               </div>
 
-              <button type="submit" class="submit-btn">Send Message</button>
+              <button type="submit" class="submit-btn" id="submitBtn">
+                <span class="btn-text">Send Message</span>
+                <span class="btn-loading" style="display: none;">
+                  <i class="fas fa-spinner fa-spin"></i> Sending...
+                </span>
+              </button>
             </form>
+            
+            <!-- Success/Error Messages -->
+            <div id="formMessages" style="margin-top: 20px;"></div>
           </div>
         </div>
       </section>
@@ -329,18 +341,68 @@
     <!-- Footer -->
     <footer class="footer">
       <div class="footer-content">
-        <div class="footer-links">
-          <a href="#features">Features</a>
-          <a href="#workflow">Workflow</a>
-          <a href="#contact">Contact</a>
-          <a href="/pipeline">Pipeline</a>
-          <a href="#privacy">Privacy Policy</a>
-          <a href="#terms">Terms of Service</a>
+        <div class="footer-top">
+          <div class="footer-section">
+            <h3 class="footer-heading">BugzyAI</h3>
+            <p class="footer-description">
+              Professional automated testing solutions that help teams deliver high-quality software faster.
+            </p>
+            <div class="footer-social">
+              <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+              <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+              <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+            </div>
+          </div>
+          
+          <div class="footer-section">
+            <h4 class="footer-subheading">Product</h4>
+            <div class="footer-links-column">
+              <a href="#features">Features</a>
+              <a href="#workflow">Workflow</a>
+              <a href="/pipeline">Test Pipeline</a>
+              <a href="/pricing">Pricing</a>
+              <a href="/integrations">Integrations</a>
+            </div>
+          </div>
+          
+          <div class="footer-section">
+            <h4 class="footer-subheading">Company</h4>
+            <div class="footer-links-column">
+              <a href="/about">About Us</a>
+              <a href="/careers">Careers</a>
+              <a href="/blog">Blog</a>
+              <a href="#contact">Contact</a>
+              <a href="/support">Support</a>
+            </div>
+          </div>
+          
+          <div class="footer-section">
+            <h4 class="footer-subheading">Legal</h4>
+            <div class="footer-links-column">
+              <a href="/privacy">Privacy Policy</a>
+              <a href="/terms">Terms of Service</a>
+              <a href="/security">Security</a>
+              <a href="/compliance">Compliance</a>
+              <a href="/cookies">Cookie Policy</a>
+            </div>
+          </div>
         </div>
-        <p class="footer-text">
-          © 2025 BugzyAI. All rights reserved. Built with ❤️ for better
-          testing.
-        </p>
+        
+        <div class="footer-bottom">
+          <div class="footer-bottom-left">
+            <p class="footer-text">
+              © 2025 BugzyAI. All rights reserved. Professional automated testing solutions.
+            </p>
+          </div>
+          <div class="footer-bottom-right">
+            <div class="footer-badges">
+              <span class="badge">SOC 2 Compliant</span>
+              <span class="badge">GDPR Ready</span>
+              <span class="badge">99.9% Uptime</span>
+            </div>
+          </div>
+        </div>
       </div>
     </footer>
 
