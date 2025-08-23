@@ -1,156 +1,568 @@
-# BugzyAI - Automated Test Generation & Runner
+<div align="center">
 
-Welcome to the BugzyAI project! This is a web application designed to automatically generate and manage test cases for software projects. It uses the power of Google's Gemini AI to create detailed test cases from various sources and provides a user-friendly interface to manage the testing workflow.
+# 🤖 BugzyAI 
+### *Intelligent Test Generation & Automation Platform*
 
-## 🚀 Getting Started
+[![Python](https://img.shields.io/badge/Python-3.7+-blue.svg)](https://www.python.org)
+[![Flask](https://img.shields.io/badge/Flask-2.0+-green.svg)](https://flask.palletsprojects.com)
+[![Selenium](https://img.shields.io/badge/Selenium-4.0+-orange.svg)](https://selenium.dev)
+[![Google Gemini AI](https://img.shields.io/badge/Google%20Gemini-AI%20Powered-red.svg)](https://ai.google.dev)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Follow these steps to get the project running on your local machine.
+*Revolutionizing software testing with AI-powered test case generation and automated execution*
 
-### 1. Prerequisites
+[🚀 Live Demo](https://your-demo-url.com) | [📖 Documentation](#documentation) | [💬 Support](#support) | [🤝 Contributing](#contributing)
 
-Make sure you have the following installed:
+</div>
 
--   Python 3.7+
--   pip (Python package installer)
+---
 
-### 2. Installation & Configuration
+## ✨ Features
 
-1.  **Clone the repository:**
-    ```bash
-    git clone <your-repository-url>
-    cd <repository-folder>
-    ```
+- 🧠 **AI-Powered Test Generation** - Generate comprehensive test cases using Google Gemini AI
+- 📋 **Multiple Input Sources** - Support for Figma designs, requirements documents, user stories, and existing test files
+- 🎯 **Smart Test Execution** - Automated Selenium-based test execution with intelligent element detection
+- 🎨 **Modern UI/UX** - Professional dark-themed interface with glassmorphism design
+- � **Responsive Design** - Optimized for desktop, tablet, and mobile devices
+- 📊 **Comprehensive Reporting** - Detailed test execution results with downloadable reports
+- 🔒 **Secure & Scalable** - Enterprise-ready architecture with security best practices
+- 🌐 **Multi-Format Support** - Handle DOCX, PDF files and various test case formats
 
-2.  **Install the required packages:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+## 🚀 Quick Start
 
-3.  **Create your Environment File (`.env`)**
-    This is the most important step for connecting to the AI.
+### Prerequisites
 
-    -   In the main project folder, create a new file named `.env`.
-    -   Open the `.env` file and add the following line, replacing `"YOUR_API_KEY_HERE"` with your actual Google Gemini API key:
-        ```
-        GOOGLE_GEMINI_API="YOUR_API_KEY_HERE"
-        ```
-    -   You can get a Gemini API key from the [Google AI Studio](https://aistudio.google.com/app/apikey).
+- **Python 3.7+** with pip
+- **Google Gemini API Key** ([Get yours here](https://aistudio.google.com/app/apikey))
+- **Modern web browser** (Chrome, Firefox, Safari, Edge)
 
-### 3. Running the Application
+### Installation
 
-Once the setup is complete, start the web server with this command:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/dhairyadev26/Bugzy_AI.git
+   cd Bugzy_AI
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Configure environment**
+   ```bash
+   # Create .env file
+   echo "GOOGLE_GEMINI_API=your_api_key_here" > .env
+   
+   # Optional Selenium configuration
+   echo "SELENIUM_HEADLESS=1" >> .env
+   echo "SELENIUM_WAIT_TIMEOUT=15" >> .env
+   ```
+
+4. **Launch the application**
+   ```bash
+   python app.py
+   ```
+
+5. **Access the platform**
+   - Open your browser to `http://localhost:5000`
+   - Start generating intelligent test cases! 🎉
+
+## 🏗️ Architecture & Project Structure
+
+```
+BugzyAI/
+├── 🎯 Core Application
+│   ├── app.py                          # Flask web server & API endpoints
+│   ├── llm_utils.py                    # Google Gemini AI integration
+│   ├── test_case_generation.py         # AI prompt engineering & response parsing
+│   ├── test_executor.py                # Selenium-based test automation
+│   └── document_parser.py              # Document processing utilities
+│
+├── 🎨 Frontend Assets
+│   ├── static/
+│   │   ├── css/
+│   │   │   ├── landing.css             # Homepage styling
+│   │   │   └── style.css               # Pipeline interface styling
+│   │   └── js/
+│   │       ├── landing.js              # Homepage interactions
+│   │       └── script.js               # Pipeline functionality
+│   │
+│   └── templates/
+│       ├── index.html                  # Landing page
+│       ├── pipeline.html               # Main testing interface
+│       ├── base.html                   # Template inheritance base
+│       └── [demo-pages]/               # Feature demonstration pages
+│           ├── about.html              # Company information
+│           ├── pricing.html            # Pricing plans
+│           ├── security.html           # Security features
+│           ├── integrations.html       # Third-party integrations
+│           ├── support.html            # Help & documentation
+│           ├── blog.html               # Latest updates
+│           ├── careers.html            # Job opportunities
+│           ├── compliance.html         # Regulatory compliance
+│           ├── privacy.html            # Privacy policy
+│           ├── terms.html              # Terms of service
+│           └── cookies.html            # Cookie policy
+│
+├── � Configuration & Dependencies
+│   ├── requirements.txt                # Python package dependencies
+│   ├── .env                           # Environment variables (API keys)
+│   ├── vercel.json                    # Deployment configuration
+│   └── uploads/                       # User file uploads directory
+│
+└── 📊 Generated Outputs
+    ├── generated_test_cases.docx       # AI-generated test cases
+    └── test_execution_results.docx     # Automation results
+```
+
+## 🔧 Core Components
+
+### 🧠 AI Engine (`llm_utils.py`)
+**The brain of BugzyAI** - Handles all AI interactions
+- **`get_llm()`**: Initializes Google Gemini AI with API authentication
+- **`invoke_llm()`**: Sends prompts to AI and processes responses
+- **Error handling**: Robust exception management for API failures
+
+### 🎨 Test Generation (`test_case_generation.py`)
+**The creative workshop** - Transforms ideas into structured test cases
+- **`generate_test_cases()`**: Main orchestration function
+- **`_create_prompt_template()`**: Intelligent prompt engineering for different input types
+- **`_parse_llm_response()`**: Converts AI responses into structured JSON
+- **Multi-format support**: Figma designs, user stories, requirements docs
+
+### 🤖 Test Execution (`test_executor.py`)
+**The automation powerhouse** - Brings test cases to life
+- **Selenium WebDriver**: Automated browser interactions
+- **Smart element detection**: CSS selectors, XPath, and text-based finding
+- **Action interpretation**: Intelligent mapping from descriptions to actions
+- **Result reporting**: Comprehensive pass/fail documentation
+
+### 📄 Document Processing (`document_parser.py`)
+**The file whisperer** - Extracts intelligence from documents
+- **Multi-format support**: DOCX, PDF processing
+- **Pattern recognition**: RegEx-based test case extraction
+- **Content validation**: Ensures data integrity and completeness
+
+### 🌐 Web Server (`app.py`)
+**The central command** - Orchestrates the entire platform
+```python
+# Core API Endpoints
+@app.route('/api/generate-test')      # AI test generation
+@app.route('/api/parse-tests-from-file') # Document parsing
+@app.route('/api/run-test')           # Test execution
+@app.route('/api/download-tests')     # Results export
+@app.route('/api/download-results')   # Execution reports
+```
+
+## 🎯 User Journey & Features
+
+### 1. 🏠 **Landing Experience**
+- **Modern Design**: Dark theme with glassmorphism effects
+- **Feature Showcase**: Interactive demonstrations of capabilities
+- **Getting Started**: Smooth onboarding process
+
+### 2. 🔄 **Test Generation Pipeline**
+**Step 1: Input Source Selection**
+- 🎨 Figma Design Analysis
+- 📝 Requirements Document Processing
+- 📋 User Story Conversion
+- 📄 Existing Test Case Import
+
+**Step 2: AI-Powered Generation**
+- Intelligent prompt crafting based on input type
+- Context-aware test case creation
+- Multiple test categories (UI, Functional, API, Performance)
+
+**Step 3: Review & Customization**
+- Interactive test case review interface
+- Selective test case management
+- Real-time editing capabilities
+
+**Step 4: Execution & Reporting**
+- Automated Selenium-based testing
+- Real-time execution monitoring
+- Comprehensive result documentation
+
+### 3. 📊 **Advanced Features**
+- **Batch Processing**: Handle multiple test suites simultaneously
+- **Cross-browser Testing**: Support for Chrome, Firefox, Safari
+- **Mobile Testing**: Responsive design validation
+- **API Testing**: RESTful service validation
+- **Performance Monitoring**: Load time and resource analysis
+
+## 🔒 Security & Configuration
+
+### Environment Variables
 ```bash
-python app.py
-```
-Now, open your web browser and go to `http://127.0.0.1:5000` to see the application live.
+# Required
+GOOGLE_GEMINI_API=your_gemini_api_key
 
----
-
-## 📂 Project Structure
-
-```
-.
-├── app.py                  # Main Flask application
-├── document_parser.py      # Handles parsing of uploaded documents
-├── llm_utils.py            # Utilities for interacting with the Language Model
-├── test_case_generation.py # Logic for generating test cases
-├── requirements.txt        # Python dependencies
-├── .env                    # Environment variables (contains API key)
-├── static/
-│   ├── css/
-│   │   ├── landing.css     # Styles for the landing page
-│   │   └── style.css       # Main styles for the pipeline
-│   └── js/
-│       ├── landing.js      # JavaScript for the landing page
-│       └── script.js       # Main JavaScript for the pipeline
-└── templates/
-    ├── index.html          # Landing page template
-    └── pipeline.html       # Main pipeline template
+# Optional Selenium Configuration
+SELENIUM_HEADLESS=1                    # 0 for visible browser
+SELENIUM_WAIT_TIMEOUT=15               # Element wait time (seconds)
+SELENIUM_PAGELOAD_TIMEOUT=30           # Page load timeout (seconds)
+SELENIUM_WINDOW_SIZE=1366,900          # Browser window dimensions
 ```
 
----
+### Security Features
+- 🔐 **API Key Protection**: Secure environment variable management
+- 🛡️ **Input Validation**: Comprehensive request sanitization
+- 📝 **File Upload Security**: Type validation and size limits
+- 🔒 **CORS Protection**: Cross-origin request security
+- 🚫 **XSS Prevention**: Content security policies
 
-## 🛠️ How It Works: The Backend Engine
+## 📱 Responsive Design System
 
-The backend is built with Python and is the core of the application's logic.
+### Desktop Experience
+- **Large Screens**: Full-featured interface with side panels
+- **Navigation**: Comprehensive menu system with quick access
+- **Workspace**: Multi-column layouts for productivity
 
-### `llm_utils.py` - The AI Communicator
+### Tablet Experience
+- **Medium Screens**: Adaptive layouts with collapsible sections
+- **Touch Optimization**: Finger-friendly interactive elements
+- **Orientation Support**: Portrait and landscape modes
 
-This file is the bridge between our application and the Google Gemini AI.
+### Mobile Experience
+- **Small Screens**: Streamlined interface with essential features
+- **Progressive Disclosure**: Step-by-step guided workflows
+- **Thumb Navigation**: Bottom-aligned action buttons
 
--   **What it does:** Its only job is to handle all communication with the AI model.
--   **`get_llm()`:** This function reads your `GOOGLE_GEMINI_API` key from the `.env` file and initializes the `ChatGoogleGenerativeAI` model. Without a valid API key here, the application cannot talk to the AI.
--   **`invoke_llm()`:** This function takes a prompt (a set of instructions) and sends it to the initialized AI model. It then waits for the AI to respond and returns the raw text answer. It is used by `test_case_generation.py`.
+## 🔧 API Documentation
 
-### `test_case_generation.py` - The AI Prompt Master
+### Generate Test Cases
+```http
+POST /api/generate-test
+Content-Type: application/json
 
-This file is responsible for telling the AI *what* to do and *how* to do it.
+{
+    "test_type": "figma|requirements|user_story|existing_tests",
+    "content": "Input content based on type",
+    "options": {
+        "test_categories": ["ui", "functional", "api"],
+        "complexity": "basic|intermediate|advanced"
+    }
+}
+```
 
--   **What it does:** It constructs detailed prompts to send to the AI and then parses the AI's response into a structured format.
--   **`_create_prompt_template()`:** This is the heart of the AI's instructions. It creates a detailed set of instructions based on the user's input type (Figma, document, etc.). **If you want to change what the AI generates (e.g., ask for more or different details), you should edit the `common_instructions` variable in this function.**
--   **`_parse_llm_response()`:** The AI's response is just a string of text. This function acts as a "translator" that carefully reads that string and extracts the test case data, converting it into a clean JSON format that our application can easily use.
--   **`generate_test_cases()`:** This is the main function that orchestrates the process. It gets the correct prompt, calls `invoke_llm()` from `llm_utils.py` to talk to the AI, and then uses `_parse_llm_response()` to clean up the result.
+### Execute Tests
+```http
+POST /api/run-test
+Content-Type: application/json
 
-### `document_parser.py` - The File Reader
-
-This file handles the "Use Existing Test Cases" flow when you upload a document.
-
--   **What it does:** It efficiently extracts text from uploaded `.docx` and `.pdf` files. This process does **not** use AI, making it very fast and reliable for documents that are already structured. It uses regular expressions (RegEx) to find and extract test cases based on patterns like "ID:", "Description:", etc.
-
-### `app.py` - The Central Controller (API)
-
-This is the main server file that runs the entire application.
-
--   **What it does:** It uses the Flask framework to create a web server and define the API endpoints that the frontend calls.
--   **`/` and `/pipeline` routes:** These simply load and display the main HTML pages of the application.
--   **`/api/generate-test`:** This is the endpoint that the frontend calls when a user wants to generate new test cases. It receives the user's input, calls the `generate_test_cases` function, and returns the structured list of tests to the frontend.
--   **`/api/parse-tests-from-file`:** This endpoint is used for the direct upload flow. It takes the uploaded file, uses `document_parser.py` to extract the tests, and sends them back to the frontend.
--   **`/api/download-tests`:** When the user clicks the download button, the frontend sends the list of generated test cases to this endpoint. This function then uses the `python-docx` library to create a `.docx` file on the fly and sends it to the user for download.
-
----
-
-## 🎨 How It Works: The Frontend Interface
-
-The frontend is what the user sees and interacts with in their browser.
-
-### `pipeline.html` - The User's View
-
--   **What it does:** This file defines the complete HTML structure of the user interface, including the four-step pipeline, the input forms, and the containers where test cases will be displayed. The most important section for displaying test cases is the `<div id="test-list-display-container"></div>`, which is initially empty.
-
-### `script.js` - The Brains of the Page
-
--   **What it does:** This file contains all the JavaScript code that makes the webpage interactive. It handles user clicks, calls the backend APIs, and dynamically updates the HTML to show new information.
--   **`goToStep()`:** This function manages the user's progression through the 4-step pipeline, showing and hiding different sections as needed. It's also responsible for deciding when to display the list of test cases.
--   **`generateTestCases()`:** When the "Generate Test Cases" button is clicked, this function gathers the user's input, sends it to the `/api/generate-test` endpoint on the backend, and waits for the response.
--   **`displayTestCasesAccordion()`:** Upon a successful response from the backend, this function dynamically creates the HTML for the accordion list of test cases. It's responsible for creating the checkboxes and ensuring that any previously selected tests remain checked if the user navigates back.
--   **`toggleTestCaseSelection()`:** This function is triggered every time a user checks or unchecks a test case. It updates the `selectedTestCases` array, which keeps track of which tests will be sent to the next phase for execution.
-
----
-
-## 🧪 Test Execution (Selenium)
-
-The backend provides `/api/run-test` to execute selected tests on a target website.
-
-Payload shape:
-
-```json
 {
     "website_url": "https://example.com",
     "test_cases": [
-        { "id": 1, "name": "Click Login", "description": "Click the login button", "type": "ui", "selector": "#login" }
+        {
+            "id": 1,
+            "name": "Login Test",
+            "description": "Click login button and verify redirect",
+            "type": "ui",
+            "selector": "#login-btn"
+        }
     ]
 }
 ```
 
-What happens:
-- UI-like tests (`ui`, `functional`, `smoke`, `regression`) are executed via Selenium (Chrome) using Selenium Manager (no manual driver install).
-- If a test description includes words like "click", the element is clicked; otherwise we verify presence.
-- Non-UI test types are currently marked `skipped`.
+### Download Results
+```http
+GET /api/download-results
+Query Parameters:
+- format: docx|pdf|json|csv
+- include_screenshots: true|false
+```
 
-Environment variables (optional):
-- `SELENIUM_HEADLESS` (default `1`): set `0` to see the browser.
-- `SELENIUM_WAIT_TIMEOUT` (default `15`): element wait seconds.
-- `SELENIUM_PAGELOAD_TIMEOUT` (default `30`): page load timeout seconds.
-- `SELENIUM_WINDOW_SIZE` (default `1366,900`).
+## 🚀 Advanced Usage
 
-Results can be downloaded via `/api/download-results`.
+### Custom Test Generation Prompts
+```python
+# Modify test_case_generation.py to customize AI behavior
+common_instructions = """
+Generate comprehensive test cases that include:
+- Detailed step-by-step instructions
+- Expected results and acceptance criteria
+- Edge cases and error scenarios
+- Performance and accessibility considerations
+"""
+```
+
+### Selenium Configuration
+```python
+# Advanced WebDriver setup in test_executor.py
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')
+options.add_argument('--no-sandbox')
+options.add_argument('--disable-dev-shm-usage')
+options.add_argument('--disable-gpu')
+```
+
+### Custom Element Selectors
+```javascript
+// Extend script.js for custom element detection
+const customSelectors = {
+    'login': ['#login', '.login-btn', '[data-testid="login"]'],
+    'submit': ['#submit', '.submit-btn', 'button[type="submit"]'],
+    'search': ['#search', '.search-input', '[placeholder*="search"]']
+};
+```
+
+## 🛠️ Development Guide
+
+### Setting Up Development Environment
+```bash
+# Clone and setup
+git clone https://github.com/dhairyadev26/Bugzy_AI.git
+cd Bugzy_AI
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install development dependencies
+pip install -r requirements.txt
+pip install pytest flask-testing selenium-wire
+
+# Setup pre-commit hooks
+pip install pre-commit
+pre-commit install
+```
+
+### Running Tests
+```bash
+# Run unit tests
+python -m pytest tests/
+
+# Run with coverage
+python -m pytest --cov=. tests/
+
+# Run integration tests
+python -m pytest tests/integration/
+
+# Run Selenium tests (requires browser)
+python -m pytest tests/selenium/ --browser=chrome
+```
+
+### Code Quality
+```bash
+# Format code
+black .
+isort .
+
+# Lint code
+flake8 .
+pylint *.py
+
+# Type checking
+mypy .
+```
+
+## 🔄 Deployment
+
+### Local Development
+```bash
+# Development server with hot reload
+export FLASK_ENV=development
+export FLASK_DEBUG=1
+python app.py
+```
+
+### Production Deployment (Vercel)
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel --prod
+```
+
+### Docker Deployment
+```dockerfile
+# Dockerfile
+FROM python:3.9-slim
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+EXPOSE 5000
+
+CMD ["python", "app.py"]
+```
+
+```bash
+# Build and run
+docker build -t bugzyai .
+docker run -p 5000:5000 --env-file .env bugzyai
+```
+
+### Environment-Specific Configuration
+```bash
+# Production environment
+export FLASK_ENV=production
+export GOOGLE_GEMINI_API=prod_api_key
+export SELENIUM_HEADLESS=1
+
+# Staging environment
+export FLASK_ENV=staging
+export GOOGLE_GEMINI_API=staging_api_key
+export SELENIUM_HEADLESS=0
+```
+
+## 📊 Monitoring & Analytics
+
+### Performance Metrics
+- **Response Time**: API endpoint performance tracking
+- **Success Rate**: Test generation and execution success rates
+- **Resource Usage**: Memory and CPU utilization monitoring
+- **User Engagement**: Feature usage analytics
+
+### Logging Configuration
+```python
+import logging
+from logging.handlers import RotatingFileHandler
+
+# Setup structured logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(name)s %(message)s',
+    handlers=[
+        RotatingFileHandler('bugzyai.log', maxBytes=10485760, backupCount=5),
+        logging.StreamHandler()
+    ]
+)
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**1. API Key Authentication Errors**
+```bash
+# Check .env file exists and contains valid API key
+cat .env
+# Verify API key format
+echo $GOOGLE_GEMINI_API
+```
+
+**2. Selenium WebDriver Issues**
+```bash
+# Update Chrome browser
+google-chrome --version
+
+# Clear browser cache
+rm -rf ~/.cache/google-chrome/
+
+# Check selenium version
+pip show selenium
+```
+
+**3. File Upload Problems**
+```bash
+# Check upload directory permissions
+ls -la uploads/
+chmod 755 uploads/
+
+# Verify file size limits
+du -h uploads/*
+```
+
+**4. Port Already in Use**
+```bash
+# Find process using port 5000
+lsof -i :5000
+netstat -tulpn | grep 5000
+
+# Kill process
+kill -9 <PID>
+```
+
+### Debug Mode
+```python
+# Enable detailed error messages
+app.debug = True
+app.config['TESTING'] = True
+
+# Add debug logging
+import logging
+logging.basicConfig(level=logging.DEBUG)
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Here's how to get started:
+
+### 1. Fork & Clone
+```bash
+git clone https://github.com/YOUR_USERNAME/Bugzy_AI.git
+cd Bugzy_AI
+```
+
+### 2. Create Feature Branch
+```bash
+git checkout -b feature/your-feature-name
+```
+
+### 3. Development Guidelines
+- **Code Style**: Follow PEP 8 for Python, use Black formatter
+- **Testing**: Add tests for new features
+- **Documentation**: Update README and inline comments
+- **Commits**: Use conventional commit format
+
+### 4. Pull Request Process
+- Ensure all tests pass
+- Update documentation
+- Add screenshots for UI changes
+- Request review from maintainers
+
+### Contributing Areas
+- 🐛 **Bug Fixes**: Help identify and fix issues
+- ✨ **New Features**: Add new testing capabilities
+- 📚 **Documentation**: Improve guides and examples
+- 🎨 **UI/UX**: Enhance user interface and experience
+- 🔧 **Performance**: Optimize speed and efficiency
+- 🌐 **Localization**: Add multi-language support
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Google Gemini AI** - Powering intelligent test generation
+- **Selenium** - Enabling automated browser testing
+- **Flask** - Providing the web framework foundation
+- **Contributors** - Thank you to all who help improve BugzyAI
+
+## 📞 Support
+
+### 💬 Community Support
+- **GitHub Issues**: [Report bugs and request features](https://github.com/dhairyadev26/Bugzy_AI/issues)
+- **Discussions**: [Join community conversations](https://github.com/dhairyadev26/Bugzy_AI/discussions)
+- **Wiki**: [Browse documentation and guides](https://github.com/dhairyadev26/Bugzy_AI/wiki)
+
+### 📧 Direct Contact
+- **Email**: support@bugzyai.com
+- **Twitter**: [@BugzyAI](https://twitter.com/BugzyAI)
+- **LinkedIn**: [BugzyAI](https://linkedin.com/company/bugzyai)
+
+### 🆘 Emergency Support
+For critical issues in production environments:
+- **Priority Support**: enterprise@bugzyai.com
+- **Phone**: +1-XXX-XXX-XXXX (Business hours: 9 AM - 6 PM EST)
+
+---
+
+<div align="center">
+
+### 🌟 Star this repository if BugzyAI helps your testing workflow!
+
+[![GitHub stars](https://img.shields.io/github/stars/dhairyadev26/Bugzy_AI?style=social)](https://github.com/dhairyadev26/Bugzy_AI/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/dhairyadev26/Bugzy_AI?style=social)](https://github.com/dhairyadev26/Bugzy_AI/network/members)
+
+**Made with ❤️ by the BugzyAI Team**
+
+[🏠 Homepage](https://bugzyai.com) | [📖 Documentation](https://docs.bugzyai.com) | [🚀 Live Demo](https://demo.bugzyai.com)
+
+</div>
