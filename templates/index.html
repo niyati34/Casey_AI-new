@@ -17,37 +17,6 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
-    
-    <!-- Firebase SDK -->
-    <script type="module">
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
-      import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-      // Your web app's Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyCU9YMX1CO_SxfETAjqvRZpUqjuBy3c0l0",
-        authDomain: "bugzyai.firebaseapp.com",
-        projectId: "bugzyai",
-        storageBucket: "bugzyai.firebasestorage.app",
-        messagingSenderId: "823760999152",
-        appId: "1:823760999152:web:c0c72e155609fef4ffa835",
-        measurementId: "G-E44DDXT37J"
-      };
-
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
-      const db = getFirestore(app);
-
-      // Make Firebase available globally
-      window.firebaseApp = app;
-      window.firebaseDB = db;
-      window.firebaseAddDoc = addDoc;
-      window.firebaseCollection = collection;
-      window.firebaseServerTimestamp = serverTimestamp;
-    </script>
   </head>
   <body>
     <!-- Main Panel -->
@@ -255,72 +224,43 @@
             Get in <span class="highlight">Touch</span>
           </h2>
           <p class="section-subtitle">
-            We're here to help you succeed. Whether you have questions, need
-            support, or want to explore how BugzyAI can transform your testing
-            workflow.
+            Connect with our team and explore the project repository.
           </p>
         </div>
 
         <div class="contact-content">
-          <div class="contact-form centered-form">
-            <h3>Send us a message</h3>
-            <p>
-              Fill out the form below and we'll get back to you within 24 hours.
-            </p>
-
-            <form id="contactForm">
-              <div class="form-group">
-                <label for="name">Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  placeholder="John Doe"
-                  required
-                />
+          <div class="contact-frames">
+            <!-- Frame for Niyati Sanja -->
+            <div class="contact-frame">
+              <h3>Niyati Sanja</h3>
+              <div class="contact-tabs">
+                <a href="https://www.linkedin.com/in/niyati-sanja/" target="_blank" class="contact-tab">LinkedIn</a>
+                <a href="https://github.com/niyatisanja0206" target="_blank" class="contact-tab">GitHub</a>
               </div>
+            </div>
 
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="john@company.com"
-                  required
-                />
+            <!-- Frame for Niyati Raiyani -->
+            <div class="contact-frame">
+              <h3>Niyati Raiyani</h3>
+              <div class="contact-tabs">
+                <a href="https://www.linkedin.com/in/niyati-raiyani/" target="_blank" class="contact-tab">LinkedIn</a>
+                <a href="https://github.com/niyati34" target="_blank" class="contact-tab">GitHub</a>
               </div>
+            </div>
 
-              <div class="form-group">
-                <label for="company">Company</label>
-                <input
-                  type="text"
-                  id="company"
-                  name="company"
-                  placeholder="Your Company"
-                />
+            <!-- Frame for Dhairya Dave -->
+            <div class="contact-frame">
+              <h3>Dhairya Dave</h3>
+              <div class="contact-tabs">
+                <a href="https://www.linkedin.com/in/dhairya-dave26/" target="_blank" class="contact-tab">LinkedIn</a>
+                <a href="https://github.com/dhairyadev26" target="_blank" class="contact-tab">GitHub</a>
               </div>
+            </div>
+          </div>
 
-              <div class="form-group">
-                <label for="message">Message</label>
-                <textarea
-                  id="message"
-                  name="message"
-                  placeholder="Tell us about your testing needs..."
-                  required
-                ></textarea>
-              </div>
-
-              <button type="submit" class="submit-btn" id="submitBtn">
-                <span class="btn-text">Send Message</span>
-                <span class="btn-loading" style="display: none;">
-                  <i class="fas fa-spinner fa-spin"></i> Sending...
-                </span>
-              </button>
-            </form>
-            
-            <!-- Success/Error Messages -->
-            <div id="formMessages" style="margin-top: 20px;"></div>
+          <!-- Centered Project Link -->
+          <div class="project-link centered" style="text-align: center; margin-top: 40px;">
+            <a href="https://github.com/niyatisanja0206/Bugzy_AI.git" target="_blank" class="github-project-btn">GitHub Project</a>
           </div>
         </div>
       </section>
@@ -362,7 +302,6 @@
               <a href="#features">Features</a>
               <a href="#workflow">Workflow</a>
               <a href="/pipeline">Test Pipeline</a>
-              <a href="/pricing">Pricing</a>
               <a href="/integrations">Integrations</a>
             </div>
           </div>

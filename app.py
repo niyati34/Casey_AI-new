@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, jsonify, send_file
 import os
-import json
 from docx import Document  # <-- This line was missing
 
 # Import the new test case generation function
@@ -9,8 +8,8 @@ from test_case_generation import generate_test_cases
 from document_parser import read_file_content, parse_document_for_tests
 from test_executor import run_tests
 
-app = Flask(__name__)
 
+app = Flask(__name__)
 
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
@@ -221,6 +220,29 @@ def download_results():
         document.save(file_stream)
         file_stream.seek(0)
         return send_file(file_stream, as_attachment=True, download_name="test_execution_results.docx")
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/submit-contact', methods=['POST'])
+def submit_contact():
+    """
+    Endpoint to handle contact form submissions.
+    """
+    try:
+        # Get data from the form
+        data = request.form
+        name = data.get('name')
+        email = data.get('email')
+        message = data.get('message')
+
+        if not name or not email or not message:
+            return jsonify({'status': 'error', 'message': 'All fields are required.'}), 400
+
+        # Placeholder for saving data logic
+        # You can implement your own logic here
+
+        return jsonify({'status': 'success', 'message': 'We will contact you soon!'}), 200
+
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
