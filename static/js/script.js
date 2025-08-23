@@ -21,14 +21,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Event Listeners
 function initializeEventListeners() {
-  // Smooth scrolling for navigation
+  // Smooth scrolling for navigation (only for same-page navigation)
   document.querySelectorAll(".nav-link").forEach((link) => {
     link.addEventListener("click", function (e) {
-      e.preventDefault();
-      const targetId = this.getAttribute("href").substring(1);
-      scrollToSection(targetId);
-      document.querySelectorAll(".nav-link").forEach((l) => l.classList.remove("active"));
-      this.classList.add("active");
+      const href = this.getAttribute("href");
+      
+      // Only prevent default for hash links (same page navigation)
+      if (href.startsWith("#")) {
+        e.preventDefault();
+        const targetId = href.substring(1);
+        scrollToSection(targetId);
+        document.querySelectorAll(".nav-link").forEach((l) => l.classList.remove("active"));
+        this.classList.add("active");
+      }
+      // For other links (like "/" for home), allow normal navigation
     });
   });
 
