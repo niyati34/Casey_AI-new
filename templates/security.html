@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Security - BugzyAI{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <h1 class="page-title">Security</h1>
+  <p class="page-subtitle">
+    Your data security is our top priority. Learn about our comprehensive security measures and compliance standards.
+  </p>
+</div>
+
+<div class="page-section">
+  <h2 class="section-title">Security Overview</h2>
+  <div class="card-grid">
+    <div class="info-card">
+      <h3><i class="fas fa-shield-alt" style="margin-right: 8px; color: #c7b6ff;"></i>SOC 2 Type II Compliant</h3>
+      <p>We maintain SOC 2 Type II compliance, demonstrating our commitment to security, availability, and confidentiality.</p>
+    </div>
+    <div class="info-card">
+      <h3><i class="fas fa-lock" style="margin-right: 8px; color: #c7b6ff;"></i>End-to-End Encryption</h3>
+      <p>All data is encrypted in transit using TLS 1.3 and at rest using AES-256 encryption standards.</p>
+    </div>
+    <div class="info-card">
+      <h3><i class="fas fa-eye" style="margin-right: 8px; color: #c7b6ff;"></i>Zero-Knowledge Architecture</h3>
+      <p>We can't access your source code or sensitive data. Our systems are designed with privacy by default.</p>
+    </div>
+  </div>
+</div>
+
+<div class="page-section">
+  <h2 class="section-title">Infrastructure Security</h2>
+  <div class="section-content">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 40px;">
+      <div>
+        <h3 style="color: #c7b6ff; margin-bottom: 12px;">🏗️ Secure Cloud Infrastructure</h3>
+        <p style="color: rgba(255,255,255,0.7);">Built on AWS with multiple availability zones and automatic failover capabilities.</p>
+      </div>
+      <div>
+        <h3 style="color: #c7b6ff; margin-bottom: 12px;">🔒 Network Security</h3>
+        <p style="color: rgba(255,255,255,0.7);">Private networks, VPCs, and strict firewall rules protect our infrastructure.</p>
+      </div>
+      <div>
+        <h3 style="color: #c7b6ff; margin-bottom: 12px;">📊 Continuous Monitoring</h3>
+        <p style="color: rgba(255,255,255,0.7);">24/7 security monitoring with automated threat detection and response.</p>
+      </div>
+      <div>
+        <h3 style="color: #c7b6ff; margin-bottom: 12px;">🔄 Regular Backups</h3>
+        <p style="color: rgba(255,255,255,0.7);">Automated backups with point-in-time recovery and disaster recovery procedures.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-section">
+  <h2 class="section-title">Access Controls</h2>
+  <div class="card-grid">
+    <div class="info-card">
+      <h3>Multi-Factor Authentication</h3>
+      <p>All user accounts support MFA with TOTP, SMS, and hardware security keys for enhanced protection.</p>
+    </div>
+    <div class="info-card">
+      <h3>Role-Based Access Control</h3>
+      <p>Granular permissions system ensures users only have access to the resources they need.</p>
+    </div>
+    <div class="info-card">
+      <h3>Single Sign-On (SSO)</h3>
+      <p>Enterprise customers can integrate with SAML 2.0 and OAuth 2.0 identity providers.</p>
+    </div>
+  </div>
+</div>
+
+<div class="page-section">
+  <h2 class="section-title">Compliance & Certifications</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 40px;">
+    <div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
+      <div style="font-size: 2rem; margin-bottom: 16px;">🛡️</div>
+      <h3 style="color: #c7b6ff; margin-bottom: 8px;">SOC 2 Type II</h3>
+      <p style="color: rgba(255,255,255,0.6); font-size: 14px;">Audited annually</p>
+    </div>
+    <div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
+      <div style="font-size: 2rem; margin-bottom: 16px;">🇪🇺</div>
+      <h3 style="color: #c7b6ff; margin-bottom: 8px;">GDPR</h3>
+      <p style="color: rgba(255,255,255,0.6); font-size: 14px;">EU compliance</p>
+    </div>
+    <div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
+      <div style="font-size: 2rem; margin-bottom: 16px;">🇺🇸</div>
+      <h3 style="color: #c7b6ff; margin-bottom: 8px;">CCPA</h3>
+      <p style="color: rgba(255,255,255,0.6); font-size: 14px;">California privacy</p>
+    </div>
+    <div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
+      <div style="font-size: 2rem; margin-bottom: 16px;">🔒</div>
+      <h3 style="color: #c7b6ff; margin-bottom: 8px;">ISO 27001</h3>
+      <p style="color: rgba(255,255,255,0.6); font-size: 14px;">In progress</p>
+    </div>
+  </div>
+</div>
+
+<div class="page-section">
+  <h2 class="section-title">Security Practices</h2>
+  <div class="section-content">
+    <div class="dark-container">
+      <h3 style="color: #c7b6ff; margin-bottom: 16px;">🔍 Regular Security Audits</h3>
+      <p>We conduct quarterly penetration testing and annual third-party security assessments to identify and address vulnerabilities.</p>
+    </div>
+    
+    <div class="dark-container">
+      <h3 style="color: #c7b6ff; margin-bottom: 16px;">👥 Employee Security Training</h3>
+      <p>All employees undergo security awareness training and background checks. We maintain strict access controls for production systems.</p>
+    </div>
+    
+    <div class="dark-container">
+      <h3 style="color: #c7b6ff; margin-bottom: 16px;">🚨 Incident Response</h3>
+      <p>We have a comprehensive incident response plan with 24/7 monitoring and rapid response procedures for security events.</p>
+    </div>
+  </div>
+</div>
+
+<div class="page-section">
+  <div style="text-align: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 40px;">
+    <h2 style="color: #c7b6ff; margin-bottom: 20px;">Report a Security Issue</h2>
+    <p style="color: rgba(255,255,255,0.8); margin-bottom: 24px;">If you discover a security vulnerability, please report it responsibly.</p>
+    <a href="mailto:security@bugzyai.com" style="background: linear-gradient(135deg, #6a54ff 0%, #8e79ff 100%); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600;">security@bugzyai.com</a>
+  </div>
+</div>
+{% endblock %}
