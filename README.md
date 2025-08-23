@@ -561,7 +561,7 @@ For critical issues in production environments:
 [![GitHub stars](https://img.shields.io/github/stars/dhairyadev26/Bugzy_AI?style=social)](https://github.com/dhairyadev26/Bugzy_AI/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/dhairyadev26/Bugzy_AI?style=social)](https://github.com/dhairyadev26/Bugzy_AI/network/members)
 
-**Made with ❤️ by the BugzyAI Team**
+**Made by the BugzyAI Team**
 
 [🏠 Homepage](https://bugzyai.com) | [📖 Documentation](https://docs.bugzyai.com) | [🚀 Live Demo](https://demo.bugzyai.com)
 
