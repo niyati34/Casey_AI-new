@@ -22,6 +22,53 @@ def index():
 def pipeline():
     return render_template('pipeline.html')
 
+# Product pages
+@app.route('/pricing')
+def pricing():
+    return render_template('pricing.html')
+
+@app.route('/integrations')
+def integrations():
+    return render_template('integrations.html')
+
+# Company pages
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/careers')
+def careers():
+    return render_template('careers.html')
+
+@app.route('/blog')
+def blog():
+    return render_template('blog.html')
+
+@app.route('/support')
+def support():
+    return render_template('support.html')
+
+# Legal pages
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
+@app.route('/security')
+def security():
+    return render_template('security.html')
+
+@app.route('/compliance')
+def compliance():
+    return render_template('compliance.html')
+
+@app.route('/cookies')
+def cookies():
+    return render_template('cookies.html')
+
 @app.route('/api/generate-test', methods=['POST'])
 def handle_generate_test():
     """

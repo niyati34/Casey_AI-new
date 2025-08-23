@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Support - BugzyAI{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <h1 class="page-title">Support Center</h1>
+  <p class="page-subtitle">
+    Get help when you need it. Our support team is here to ensure your success with BugzyAI.
+  </p>
+</div>
+
+<div class="page-section">
+  <h2 class="section-title">How can we help you?</h2>
+  <div class="card-grid">
+    <div class="info-card">
+      <h3><i class="fas fa-book" style="margin-right: 8px; color: #c7b6ff;"></i>Documentation</h3>
+      <p>Comprehensive guides, API references, and tutorials to help you get the most out of BugzyAI.</p>
+      <a href="#" style="color: #c7b6ff; text-decoration: none; font-weight: 500;">Browse Docs →</a>
+    </div>
+    <div class="info-card">
+      <h3><i class="fas fa-video" style="margin-right: 8px; color: #c7b6ff;"></i>Video Tutorials</h3>
+      <p>Step-by-step video guides covering everything from basic setup to advanced features.</p>
+      <a href="#" style="color: #c7b6ff; text-decoration: none; font-weight: 500;">Watch Videos →</a>
+    </div>
+    <div class="info-card">
+      <h3><i class="fas fa-comments" style="margin-right: 8px; color: #c7b6ff;"></i>Community Forum</h3>
+      <p>Connect with other BugzyAI users, share best practices, and get answers from the community.</p>
+      <a href="#" style="color: #c7b6ff; text-decoration: none; font-weight: 500;">Join Forum →</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-section">
+  <h2 class="section-title">Contact Support</h2>
+  <div class="card-grid">
+    <div class="info-card">
+      <h3><i class="fas fa-envelope" style="margin-right: 8px; color: #c7b6ff;"></i>Email Support</h3>
+      <p>Get detailed help from our support team via email.</p>
+      <div style="margin-top: 16px; color: rgba(255,255,255,0.6); font-size: 14px;">
+        Response time: Within 24 hours
+      </div>
+      <a href="mailto:support@bugzyai.com" style="color: #c7b6ff; text-decoration: none; font-weight: 500; display: block; margin-top: 12px;">support@bugzyai.com</a>
+    </div>
+    
+    <div class="info-card">
+      <h3><i class="fas fa-comment-alt" style="margin-right: 8px; color: #c7b6ff;"></i>Live Chat</h3>
+      <p>Chat with our support team in real-time for immediate assistance.</p>
+      <div style="margin-top: 16px; color: rgba(255,255,255,0.6); font-size: 14px;">
+        Available: Mon-Fri, 9 AM - 6 PM PST
+      </div>
+      <button style="background: linear-gradient(135deg, #6a54ff 0%, #8e79ff 100%); color: white; padding: 8px 16px; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; margin-top: 12px;">Start Chat</button>
+    </div>
+    
+    <div class="info-card">
+      <h3><i class="fas fa-phone" style="margin-right: 8px; color: #c7b6ff;"></i>Phone Support</h3>
+      <p>Speak directly with our technical experts for complex issues.</p>
+      <div style="margin-top: 16px; color: rgba(255,255,255,0.6); font-size: 14px;">
+        Enterprise customers only
+      </div>
+      <div style="color: #c7b6ff; font-weight: 500; margin-top: 12px;">Schedule a call</div>
+    </div>
+  </div>
+</div>
+
+<div class="page-section">
+  <h2 class="section-title">Frequently Asked Questions</h2>
+  <div class="section-content">
+    <div style="max-width: 800px; margin: 0 auto;">
+      <div style="margin-bottom: 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 24px;">
+        <h3 style="color: #c7b6ff; margin-bottom: 12px;">How do I get started with BugzyAI?</h3>
+        <p style="color: rgba(255,255,255,0.8);">Simply sign up for a free account, follow our quick start guide, and you'll be generating tests in minutes. No credit card required for the free tier.</p>
+      </div>
+      
+      <div style="margin-bottom: 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 24px;">
+        <h3 style="color: #c7b6ff; margin-bottom: 12px;">What types of tests can BugzyAI generate?</h3>
+        <p style="color: rgba(255,255,255,0.8);">BugzyAI can generate UI tests, API tests, accessibility tests, performance tests, and more. Our AI adapts to your specific application and requirements.</p>
+      </div>
+      
+      <div style="margin-bottom: 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 24px;">
+        <h3 style="color: #c7b6ff; margin-bottom: 12px;">Is my data secure with BugzyAI?</h3>
+        <p style="color: rgba(255,255,255,0.8);">Yes, we take security seriously. All data is encrypted in transit and at rest, we're SOC 2 compliant, and we never store your source code or sensitive application data.</p>
+      </div>
+      
+      <div style="margin-bottom: 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 24px;">
+        <h3 style="color: #c7b6ff; margin-bottom: 12px;">Can I integrate BugzyAI with my existing CI/CD pipeline?</h3>
+        <p style="color: rgba(255,255,255,0.8);">Absolutely! We provide integrations for GitHub Actions, GitLab CI, Jenkins, and more. You can also use our REST API for custom integrations.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-section">
+  <h2 class="section-title">Service Status</h2>
+  <div class="status-indicator" style="max-width: 600px; margin: 0 auto;">
+    <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+      <div style="width: 12px; height: 12px; background: #4ade80; border-radius: 50%; margin-right: 8px; box-shadow: 0 0 12px rgba(74, 222, 128, 0.5);"></div>
+      <span style="color: #4ade80; font-weight: 600;">All Systems Operational</span>
+    </div>
+    <p style="color: rgba(255,255,255,0.8); margin-bottom: 20px;">Our platform is running smoothly with 99.9% uptime.</p>
+    <a href="#" style="color: #c7b6ff; text-decoration: none; font-weight: 500;">View Status Page →</a>
+  </div>
+</div>
+{% endblock %}
