@@ -2,14 +2,8 @@ import re
 import json
 from typing import List, Dict, Any
 from llm_utils import get_llm, invoke_llm
-
-try:
-    from jsonschema import validate as jsonschema_validate
-    from jsonschema.exceptions import ValidationError as JsonSchemaValidationError
-except Exception:
-    jsonschema_validate = None
-    class JsonSchemaValidationError(Exception):
-        pass
+from jsonschema import validate as jsonschema_validate
+from jsonschema.exceptions import ValidationError as JsonSchemaValidationError
 
 def _create_prompt_template(test_type):
     """
