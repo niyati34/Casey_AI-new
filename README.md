@@ -1,6 +1,6 @@
-# Casey AI - Automated Test Generation & Runner
+# BugzyAI - Automated Test Generation & Runner
 
-Welcome to the Casey AI project! This is a web application designed to automatically generate and manage test cases for software projects. It uses the power of Google's Gemini AI to create detailed test cases from various sources and provides a user-friendly interface to manage the testing workflow.
+Welcome to the BugzyAI project! This is a web application designed to automatically generate and manage test cases for software projects. It uses the power of Google's Gemini AI to create detailed test cases from various sources and provides a user-friendly interface to manage the testing workflow.
 
 ## 🚀 Getting Started
 

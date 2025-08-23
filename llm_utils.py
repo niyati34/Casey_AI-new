@@ -43,7 +43,7 @@ def invoke_llm(llm, prompt_template, input_data):
         "Authorization": f"Bearer {llm['api_key']}",
         "Content-Type": "application/json",
         "HTTP-Referer": "https://openrouter.ai/",  # OpenRouter recommends setting this
-        "X-Title": "Casey-AI"
+        "X-Title": "BugzyAI"
     }
     data = {
         "model": llm["model"],
