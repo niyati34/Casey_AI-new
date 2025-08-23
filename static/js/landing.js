@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   wirePanelNav();
   wireCta();
   setupStatAnimations();
+  setupStickyTopbar();
 });
 
 function wirePanelNav() {
@@ -72,22 +73,47 @@ function animateStatBlock(block) {
     const t = Math.min(1, (now - start) / duration);
     const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
     let val = target * eased;
-    
+
     let displayVal;
     if (isPercent) {
-        displayVal = val.toFixed(1) + "%";
+      displayVal = val.toFixed(1) + "%";
     } else {
-        val = Math.round(val);
-        displayVal = isK ? val + "k" : String(val);
-        if(isPlus) displayVal += "+";
+      val = Math.round(val);
+      displayVal = isK ? val + "k" : String(val);
+      if (isPlus) displayVal += "+";
     }
 
     numEl.textContent = displayVal;
     if (t < 1) {
-        requestAnimationFrame(tick);
+      requestAnimationFrame(tick);
     } else {
-        numEl.textContent = raw; // snap to original exact formatting
+      numEl.textContent = raw; // snap to original exact formatting
     }
   }
   requestAnimationFrame(tick);
+}
+
+function setupStickyTopbar() {
+  const topbar = document.querySelector(".panel-topbar");
+  if (!topbar) return;
+
+  const update = () => {
+    const scrollY = window.scrollY || window.pageYOffset;
+    const threshold = 100; // Show sticky navbar after scrolling 100px
+
+    if (scrollY > threshold) {
+      topbar.classList.add("is-sticky");
+    } else {
+      topbar.classList.remove("is-sticky");
+    }
+  };
+
+  // Respond to scroll and resize
+  window.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update);
+  // In case we land on a deep link
+  window.addEventListener("hashchange", () => setTimeout(update, 0));
+
+  // Initial state
+  update();
 }
